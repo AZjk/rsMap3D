@@ -178,7 +178,7 @@ class ProcessPowderScanForm(AbstractOutputView):
                                     WARNING_STR,
                                     "The specified directory \n" + \
                                     str(os.path.dirname(fileName)) + \
-                                    "\does not exist")
+                                    "does not exist")
                 self.setFileName.emit(fileName)
         if not os.access(os.path.dirname(fileName), os.W_OK):
             self.outputFileName = EMPTY_STR

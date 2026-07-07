@@ -154,7 +154,7 @@ class ProcessImageStackForm(AbstractGridOutputForm):
                     message.warning(self,
                                     WARNING_STR,
                                     "The specified imagePrefix conatins one " +
-                                    "of the following invalid characters \/:*?<>|")
+                                    "of the following invalid characters \\/:*?<>|")
             else:
                 self.imageFilePrefix = imageFilePrefix
                 

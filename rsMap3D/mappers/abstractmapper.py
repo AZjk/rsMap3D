@@ -69,9 +69,9 @@ class AbstractGridMapper(object):
                (time.time() - _start_time))
         
         # print some information
-        print ('qx: ', qx.min(), ' .... ', qx.max())
-        print ('qy: ', qy.min(), ' .... ', qy.max())
-        print ('qz: ', qz.min(), ' .... ', qz.max())
+        print ('Qx/H: ', qx.min(), ' .... ', qx.max())
+        print ('Qy/K: ', qy.min(), ' .... ', qy.max())
+        print ('Qz/L: ', qz.min(), ' .... ', qz.max())
         self.gridWriter.setData(qx, qy, qz, gint)
         self.gridWriter.setFileInfo(self.getFileInfo())
         self.gridWriter.write()

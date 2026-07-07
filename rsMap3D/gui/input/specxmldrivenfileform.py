@@ -21,7 +21,7 @@ from rsMap3D.utils.srange import srange
 
 class SpecXMLDrivenFileForm(AbstractImagePerFileView, UsesXMLInstConfig, UsesXMLDetectorConfig):
 
-    SCAN_LIST_REGEXP = "((\d)+(-(\d)+)?\,( )?)+"
+    SCAN_LIST_REGEXP = r"((\d)+(-(\d)+)?\,( )?)+"
 
     def __init__(self, **kwargs):
         super(SpecXMLDrivenFileForm, self).__init__(**kwargs)

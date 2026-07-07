@@ -33,8 +33,8 @@ class S33SpecScanFileForm(SpecXMLDrivenFileForm):
 
     #UPDATE_PROGRESS_SIGNAL = "updateProgress"
     # Regular expressions for string validation
-    PIX_AVG_REGEXP_1 =  "^(\d*,*)+$"
-    PIX_AVG_REGEXP_2 =  "^((\d)+,*){2}$"
+    PIX_AVG_REGEXP_1 =  r"^(\d*,*)+$"
+    PIX_AVG_REGEXP_2 =  r"^((\d)+,*){2}$"
     #Strings for Text Widgets
     
     NONE_RADIO_NAME = "None"

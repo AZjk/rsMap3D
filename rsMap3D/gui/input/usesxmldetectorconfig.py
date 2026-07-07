@@ -31,13 +31,13 @@ class UsesXMLDetectorConfig(AbstractFileView):
     This provides gui that allows file selection, then detector selection since
     multiple detectors can be defined in a file and then ROI selection.
     '''
-    DET_ROI_REGEXP_1 =  "^(\d*,*)+$"
-    DET_ROI_REGEXP_2 =  "^(\d)+,(\d)+,(\d)+,(\d)+$"
+    DET_ROI_REGEXP_1 =  r"^(\d*,*)+$"
+    DET_ROI_REGEXP_2 =  r"^(\d)+,(\d)+,(\d)+,(\d)+$"
 
     #UPDATE_PROGRESS_SIGNAL = "updateProgress"
     # Regular expressions for string validation
-    PIX_AVG_REGEXP_1 =  "^(\d*,*)+$"
-    PIX_AVG_REGEXP_2 =  "^((\d)+,*){2}$"
+    PIX_AVG_REGEXP_1 =  r"^(\d*,*)+$"
+    PIX_AVG_REGEXP_2 =  r"^((\d)+,*){2}$"
 
     def __init__(self, parent=None, **kwargs):
         '''
@@ -135,7 +135,9 @@ class UsesXMLDetectorConfig(AbstractFileView):
     def _currentDetectorChanged(self, currentDetector):
         logger.debug(METHOD_ENTER_STR % str(currentDetector))
         self.currentDetector = str(currentDetector)
-        self.updateROIandNumAvg()
+        # if the detector list is empty, let's not update ROI etc.
+        if currentDetector != "":
+           self.updateROIandNumAvg()
         logger.debug(METHOD_EXIT_STR  % self.currentDetector)
         
 #    @qtCore.pyqtSlot()

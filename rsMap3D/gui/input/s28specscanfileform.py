@@ -16,7 +16,7 @@ from rsMap3D.gui.rsm3dcommonstrings import WARNING_STR, BROWSE_STR,\
     COMMA_STR, QLINEEDIT_COLOR_STYLE, BLACK, RED, EMPTY_STR,\
     BAD_PIXEL_FILE_FILTER, SELECT_BAD_PIXEL_TITLE, SELECT_FLAT_FIELD_TITLE,\
     TIFF_FILE_FILTER
-from rsMap3D.datasource.Sector12SpecDataSource import Sector12SpecDataSource
+from rsMap3D.datasource.Sector28SpecDataSource import Sector28SpecDataSource
 from rsMap3D.transforms.unitytransform3d import UnityTransform3D
 from rsMap3D.transforms.polemaptransform3d import PoleMapTransform3D
 from rsMap3D.gui.input.specxmldrivenfileform import SpecXMLDrivenFileForm
@@ -24,12 +24,12 @@ from rsMap3D.gui.output.processvtioutputform import ProcessVTIOutputForm
 from rsMap3D.gui.output.processimagestackform import ProcessImageStackForm
 from PyQt5.QtWidgets import QAbstractButton
 
-class S12SpecScanFileForm(SpecXMLDrivenFileForm):
+class S28SpecScanFileForm(SpecXMLDrivenFileForm):
     '''
     This class presents information for selecting input files
     '''
 
-    FORM_TITLE = "Sector 12 Spec/XML Setup"
+    FORM_TITLE = "Sector 28 Spec/XML Setup"
 
     #UPDATE_PROGRESS_SIGNAL = "updateProgress"
     # Regular expressions for string validation
@@ -43,14 +43,14 @@ class S12SpecScanFileForm(SpecXMLDrivenFileForm):
     
     @staticmethod
     def createInstance(parent=None, appConfig=None):
-        return S12SpecScanFileForm(parent = parent, appConfig=appConfig)
+        return S28SpecScanFileForm(parent = parent, appConfig=appConfig)
         
     def __init__(self, **kwargs):
         '''
         Constructor - Layout Widgets on the page and link actions
         '''
         logger.debug(METHOD_ENTER_STR)
-        super(S12SpecScanFileForm, self).__init__(**kwargs)
+        super(S28SpecScanFileForm, self).__init__(**kwargs)
 
         #Initialize parameters
         self.projectionDirection = [0,0,1]
@@ -152,7 +152,7 @@ class S12SpecScanFileForm(SpecXMLDrivenFileForm):
         Create Layout holding controls widgets
         '''
         logger.debug(METHOD_ENTER_STR)
-        controlBox = super(S12SpecScanFileForm, self)._createControlBox()
+        controlBox = super(S28SpecScanFileForm, self)._createControlBox()
         logger.debug(METHOD_EXIT_STR)
         return controlBox
     
@@ -161,7 +161,7 @@ class S12SpecScanFileForm(SpecXMLDrivenFileForm):
         Create widgets for collecting data
         '''
         logger.debug(METHOD_ENTER_STR)
-        dataBox = super(S12SpecScanFileForm, self)._createDataBox()
+        dataBox = super(S28SpecScanFileForm, self)._createDataBox()
         dataLayout = dataBox.layout()
         row = dataLayout.rowCount()
         self._createInstConfig(dataLayout, row)
@@ -301,7 +301,7 @@ class S12SpecScanFileForm(SpecXMLDrivenFileForm):
             self.transform = None
             
         self.dataSource = \
-            Sector12SpecDataSource(str(self.getProjectDir()), \
+            Sector28SpecDataSource(str(self.getProjectDir()), \
                                    str(self.getProjectName()), \
                                    str(self.getProjectExtension()), \
                                    str(self.getInstConfigName()), \

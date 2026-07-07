@@ -33,9 +33,9 @@ class XPCSSpecScanFileForm(SpecXMLDrivenFileForm):
     '''
     FORM_TITLE = "XPCS SPEC/XML Setup"
     
-    DET_ROI_REGEXP_1 =  "^(\d*,*)+$"
-    DET_ROI_REGEXP_2 =  "^(\d)+,(\d)+,(\d)+,(\d)+$"
-    SCAN_LIST_REGEXP = "((\d)+(-(\d)+)?\,( )?)+"
+    DET_ROI_REGEXP_1 =  r"^(\d*,*)+$"
+    DET_ROI_REGEXP_2 =  r"^(\d)+,(\d)+,(\d)+,(\d)+$"
+    SCAN_LIST_REGEXP =  r"((\d)+(-(\d)+)?\,( )?)+"
 
     @staticmethod
     def createInstance(parent=None, appConfig=None):
