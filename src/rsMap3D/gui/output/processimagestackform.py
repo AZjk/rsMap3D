@@ -2,11 +2,11 @@
  Copyright (c) 2016, UChicago Argonne, LLC
  See LICENSE file.
 '''
-import PyQt5.QtGui as qtGui
-import PyQt5.QtCore as qtCore
-import PyQt5.QtWidgets as qtWidgets
+import PySide6.QtGui as qtGui
+import PySide6.QtCore as qtCore
+import PySide6.QtWidgets as qtWidgets
 
-from  PyQt5.QtCore import pyqtSlot as Slot
+from PySide6.QtCore import Slot
 
 from rsMap3D.gui.output.abstractgridoutputform import AbstractGridOutputForm
 from rsMap3D.gui.rsm3dcommonstrings import BROWSE_STR, SAVE_DIR_STR, WARNING_STR,\

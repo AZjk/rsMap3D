@@ -6,9 +6,9 @@ import logging
 from rsMap3D.config.rsmap3dlogging import METHOD_ENTER_STR, METHOD_EXIT_STR
 logger = logging.getLogger(__name__)
 
-import PyQt5.QtCore as qtCore
-import PyQt5.QtGui as qtGui
-import PyQt5.QtWidgets as qtWidgets
+import PySide6.QtCore as qtCore
+import PySide6.QtGui as qtGui
+import PySide6.QtWidgets as qtWidgets
 
 from rsMap3D.gui.input.abstractimageperfileview import AbstractImagePerFileView
 from rsMap3D.gui.input.usesxmlinstconfig import UsesXMLInstConfig
@@ -66,8 +66,8 @@ class SpecXMLDrivenFileForm(AbstractImagePerFileView, UsesXMLInstConfig, UsesXML
         logger.debug(METHOD_ENTER_STR)
         label = qtWidgets.QLabel("Scan Numbers")
         self.scanNumsTxt = qtWidgets.QLineEdit()
-        rx = qtCore.QRegExp(self.SCAN_LIST_REGEXP)
-        self.scanNumsTxt.setValidator(qtGui.QRegExpValidator(rx,self.scanNumsTxt))
+        rx = qtCore.QRegularExpression(self.SCAN_LIST_REGEXP)
+        self.scanNumsTxt.setValidator(qtGui.QRegularExpressionValidator(rx,self.scanNumsTxt))
         layout.addWidget(label, row, 0)
         layout.addWidget(self.scanNumsTxt, row, 1)
         logger.debug(METHOD_EXIT_STR)
