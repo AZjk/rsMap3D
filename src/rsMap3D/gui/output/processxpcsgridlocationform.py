@@ -12,7 +12,6 @@ from  PyQt5.QtCore import pyqtSlot as Slot
 from rsMap3D.gui.rsm3dcommonstrings import SAVE_FILE_STR, WARNING_STR,\
     BROWSE_STR
 import os
-from rsMap3D.gui.qtsignalstrings import EDIT_FINISHED_SIGNAL, CLICKED_SIGNAL
 from rsMap3D.gui.rsmap3dsignals import SET_FILE_NAME_SIGNAL
 from rsMap3D.mappers.xpcsgridlocationmapper import XPCSGridLocationMapper
 from rsMap3D.gui.output.abstractgridoutputform import AbstractGridOutputForm

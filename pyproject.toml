@@ -15,6 +15,7 @@ authors = [
 requires-python = ">=3.9"
 dependencies = [
     "PyQt5",
+    "PySide6",
     "vtk",
     "numpy",
     "xrayutilities",
