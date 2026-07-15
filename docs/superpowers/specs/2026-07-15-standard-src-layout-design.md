@@ -99,11 +99,17 @@ These were confirmed interactively before writing this spec:
    `docs/build/` (8MB of generated HTML/doctrees) is removed from git and
    added to `.gitignore` — it's regenerable via `make html` and shouldn't be
    tracked.
-9. **`anglecalcexamples/` moves to a top-level `examples/` folder**
-   (`examples/anglecalcexamples/`). Nothing in `src/rsMap3D` imports this
-   subpackage today — it exists purely as copy-and-adapt reference code for
-   a user's `<sampleAngleMapFunction>` PYTHONPATH plugin, referenced by path
-   in instrument XML configs, not as a Python import path.
+9. **`anglecalcexamples/` stays inside the installed package**
+   (`src/rsMap3D/anglecalcexamples/`), reversing an earlier decision made
+   during brainstorming. No `.py` file imports it, but
+   `tests/fixtures/33-id-e/33IDE_sixc.xml` (a real fixture demonstrating
+   the feature) references it via `module="rsMap3D.anglecalcexamples.sumgammamu"`
+   — several sector-specific data sources (`Sector33SpecDataSource.py` and
+   others) dynamically `importlib.import_module()` that exact dotted path
+   at runtime for the `<sampleAngleMapFunction>` plugin mechanism. Moving
+   it off the Python import path would silently break any deployed
+   instrument config still pointing at `rsMap3D.anglecalcexamples.*`, so
+   it ships with the package instead.
 10. **Dependency list in `pyproject.toml` is corrected** to match actual
     imports, instead of carrying forward `setup.py`'s incomplete
     `install_requires = [spec2nexus, pillow]`:
@@ -139,6 +145,7 @@ rsMap3D/
 │       ├── mappers/
 │       ├── transforms/
 │       ├── utils/
+│       ├── anglecalcexamples/    # ships with the package (see decision 9)
 │       └── resources/            # only the shipped *.xml package_data
 ├── tests/
 │   ├── config/
@@ -157,10 +164,6 @@ rsMap3D/
 │   └── paraview/
 │       ├── paraviewPlot.py
 │       └── paraviewPlot_tile.py
-├── examples/
-│   └── anglecalcexamples/
-│       ├── copycolumn.py
-│       └── sumgammamu.py
 └── docs/
     ├── conf.py, index.rst, Makefile, make.bat
     ├── Icons/, Installation/, Tutorial/

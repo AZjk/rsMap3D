@@ -234,34 +234,13 @@ git commit -m "Move docs/ out of the package; stop tracking generated docs/build
 
 ---
 
-### Task 4: Move `anglecalcexamples/` to top-level `examples/`
+### Task 4: `anglecalcexamples/` — SUPERSEDED, stays inside the package
 
-**Files:**
-- Move: `src/rsMap3D/anglecalcexamples/` → `examples/anglecalcexamples/`
+**Original plan:** move `src/rsMap3D/anglecalcexamples/` → `examples/anglecalcexamples/`, on the assumption that nothing imports it.
 
-**Interfaces:** None — confirmed in the design spec that nothing under `src/rsMap3D` imports this subpackage.
+**What actually happened during execution:** the move was implemented and reviewed clean, but verification turned up `tests/fixtures/33-id-e/33IDE_sixc.xml` referencing `module="rsMap3D.anglecalcexamples.sumgammamu"` — the real `<sampleAngleMapFunction>` plugin mechanism (`Sector33SpecDataSource.py` and other sector data sources `importlib.import_module()` that exact dotted path at runtime). Moving the subpackage off the Python import path would silently break any deployed instrument config using it. The move was reverted: `anglecalcexamples/` stays at `src/rsMap3D/anglecalcexamples/`, shipping with the installed package. No top-level `examples/` directory is created. See the design spec's decision 9 for the corrected rationale.
 
-- [ ] **Step 1: Move it**
-
-```bash
-mkdir -p examples
-git mv src/rsMap3D/anglecalcexamples examples/anglecalcexamples
-```
-
-- [ ] **Step 2: Verify nothing still imports it**
-
-```bash
-grep -rn "anglecalcexamples" src/ tests/ 2>/dev/null
-```
-
-Expected: no output.
-
-- [ ] **Step 3: Commit**
-
-```bash
-git add -A
-git commit -m "Move anglecalcexamples/ to top-level examples/"
-```
+No further action needed for this task — it is complete as of the revert commit.
 
 ---
 
@@ -2190,7 +2169,7 @@ Expected: no collection errors; the new `test_cli.py` and `tests/workflows/*` te
 - [ ] **Step 5: Confirm no stray references to old paths remain**
 
 ```bash
-grep -rn "rsMap3D/test\b\|rsMap3D/resources/spec\|rsMap3D/docs\b\|rsMap3D/anglecalcexamples" src/ tests/ scripts/ examples/ docs/ pyproject.toml 2>/dev/null
+grep -rn "rsMap3D/test\b\|rsMap3D/resources/spec\|rsMap3D/docs\b" src/ tests/ scripts/ docs/ pyproject.toml 2>/dev/null
 ```
 
 Expected: no output.
@@ -2201,7 +2180,7 @@ Expected: no output.
 ls
 ```
 
-Expected: `.gitignore`, `LICENSE`, `README.md`, `pyproject.toml`, `src/`, `tests/`, `scripts/`, `examples/`, `docs/` — no `setup.py`, `MANIFEST.in`, `Scripts/`, `.project`, `.pydevproject`.
+Expected: `.gitignore`, `LICENSE`, `README.md`, `pyproject.toml`, `src/`, `tests/`, `scripts/`, `docs/` — no `setup.py`, `MANIFEST.in`, `Scripts/`, `.project`, `.pydevproject`, `examples/` (anglecalcexamples/ stays inside `src/rsMap3D/`, see Task 4's note).
 
 - [ ] **Step 7: Final commit (if Step 1's reinstall or any cleanup produced changes)**
 
