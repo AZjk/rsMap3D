@@ -42,7 +42,7 @@ class UsesCommonOutputTypes(AbstractFileView):
         self.outTypeChooser.addItem(self.POLE_MAP_STR)
         layout.addWidget(label, row, 0)
         layout.addWidget(self.outTypeChooser, row, 1)
-        self.outTypeChooser.currentIndexChanged[str].connect(self._outputTypeChanged)
+        self.outTypeChooser.currentTextChanged.connect(self._outputTypeChanged)
         
         logger.debug("Exit")
         

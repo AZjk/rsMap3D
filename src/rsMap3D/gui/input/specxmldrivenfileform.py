@@ -55,7 +55,7 @@ class SpecXMLDrivenFileForm(AbstractImagePerFileView, UsesXMLInstConfig, UsesXML
         self.outTypeChooser.addItem(self.POLE_MAP_STR)
         layout.addWidget(label, row, 0)
         layout.addWidget(self.outTypeChooser, row, 1)
-        self.outTypeChooser.currentIndexChanged[str].connect(self._outputTypeChanged)
+        self.outTypeChooser.currentTextChanged.connect(self._outputTypeChanged)
 #         self.connect(self.outTypeChooser, \
 #                      qtCore.SIGNAL(CURRENT_INDEX_CHANGED_SIGNAL), \
 #                      self._outputTypeChanged)

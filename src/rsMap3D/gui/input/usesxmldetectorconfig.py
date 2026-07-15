@@ -97,7 +97,7 @@ class UsesXMLDetectorConfig(AbstractFileView):
         # use new style to emit edit finished signal
         self.detConfigFileButton.clicked.connect(self._browseForDetFile)
         self.detConfigTxt.editingFinished.connect(self._detConfigChanged)
-        self.detSelect.currentIndexChanged[str].connect(self._currentDetectorChanged)
+        self.detSelect.currentTextChanged.connect(self._currentDetectorChanged)
         logger.debug(METHOD_EXIT_STR)
         
 
@@ -280,7 +280,7 @@ class UsesXMLDetectorConfig(AbstractFileView):
             logger.debug("updateDetectorList - " + str(detID))
         self.detSelect.itemText(0)
         
-        self.detSelect.currentIndexChanged[str].emit(self.detSelect.itemText(0))
+        self.detSelect.currentTextChanged.emit(self.detSelect.itemText(0))
         logger.debug(METHOD_EXIT_STR)
         
     def updateROIandNumAvg(self):

@@ -154,7 +154,7 @@ class ProcessVTIOutputForm(AbstractOutputView):
 #                      self._editFinishedOutputFile)
         self.outFileTxt.editingFinished.connect(self._editFinishedOutputFile)
         self.setFileName[str].connect( self.setOutFileText)
-        self.outputTypeSelect.currentIndexChanged[str]. \
+        self.outputTypeSelect.currentTextChanged. \
             connect(self._selectedTypeChanged)
         logger.debug(METHOD_EXIT_STR)
         return dataBox
