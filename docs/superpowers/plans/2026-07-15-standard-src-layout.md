@@ -1487,7 +1487,9 @@ git commit -m "Extract mapSpecAngleScan_v4.2.py into rsMap3D.workflows.angle_sca
 
 **Interfaces:**
 - Consumes: same `Sector33SpecDataSource` / `QGridMapper` constructors as Task 8.
-- Produces: `rsMap3D.workflows.parametric_scan.run(config: dict) -> None`. `config` keys: `project_dir`, `config_dir`, `spec_file`, `scan_list` (list of scan-range strings), `use_HKL`, `detector_config`, `instrument_config`, `detector_name`, `binning`, `roi_setting`, `nx`, `ny`, `nz`. This is a new schema (the original script took no config file at all — every value was a hand-edited module-level variable).
+- Produces: `rsMap3D.workflows.parametric_scan.run(config: dict) -> None`. `config` keys: `project_dir`, `config_dir`, `spec_file`, `scan_list` (list of scan-range strings), `use_HKL`, `detector_config`, `instrument_config`, `detector_name`, `binning`, `roi_setting` (or `None`, matching Task 8/10's convention), `nx`, `ny`, `nz`. This is a new schema (the original script took no config file at all — every value was a hand-edited module-level variable).
+
+**Correction found during task review:** the code below originally dropped the ROI auto-detection fallback that the source script had (`dReader = detReader(detectorConfigName)`; `if roi is None: ... roi = [1, nPixels[0], 1, nPixels[1]]`), and dropped one diagnostic `print("imageToBeUsed %s" % imageToBeUsed)` line without converting it to `logger.info`. Both were restored to match Task 8's `angle_scan.py` handling of the identical `roi_setting` config key and the module docstring's claim of full print-to-logger coverage. The code block below reflects the corrected version.
 
 **Known pre-existing bugs being fixed during this extraction (confirmed with the user before writing this task):**
 1. `print scanRange[0]` is a Python 2 statement — hard `SyntaxError` under Python 3. Replaced with `logger.info` calls throughout (matching Task 8's style), since the whole script's only "console output" mechanism was `print`.
@@ -1589,7 +1591,8 @@ def test_run_masks_one_image_per_line_and_restores_mask(monkeypatch, config):
     # 3 fake images -> one grid map per image, 0-indexed internally
     assert len(_FakeGridMapper.instances) == 3
     for mapper in _FakeGridMapper.instances:
-        assert mapper.maskSnapshot.count(False) == 1
+        # exactly one image is isolated (mask=True) per pass; the rest are excluded
+        assert mapper.maskSnapshot.count(True) == 1
     # the mask must be restored to the original after every line runs
     assert ds.imageToBeUsed[1] == [True, True, True]
 
@@ -1645,6 +1648,8 @@ import logging
 import os
 
 from rsMap3D.config.rsmap3dconfigparser import RSMap3DConfigParser
+from rsMap3D.datasource.DetectorGeometryForXrayutilitiesReader import \
+    DetectorGeometryForXrayutilitiesReader as detReader
 from rsMap3D.datasource.Sector33SpecDataSource import Sector33SpecDataSource
 from rsMap3D.gui.rsm3dcommonstrings import BINARY_OUTPUT
 from rsMap3D.mappers.gridmapper import QGridMapper
@@ -1690,6 +1695,14 @@ def run(config):
         raise Exception("Instrument Config file does not exist: %s" %
                         instConfigName)
 
+    dReader = detReader(detectorConfigName)
+
+    if roi is None:
+        detector = dReader.getDetectorById(detectorName)
+        nPixels = dReader.getNpixels(detector)
+        roi = [1, nPixels[0], 1, nPixels[1]]
+    logger.info("ROI: %s " % roi)
+
     specName, specExt = os.path.splitext(specFile)
     appConfig = RSMap3DConfigParser()
 
@@ -1706,6 +1719,7 @@ def run(config):
         ds.loadSource(mapHKL=mapHKL)
         ds.setRangeBounds(ds.getOverallRanges())
         imageToBeUsed = ds.getImageToBeUsed()
+        logger.info("imageToBeUsed %s" % imageToBeUsed)
 
         numImages = len(imageToBeUsed[scanRange[0]])
         for zeroBasedIndex in range(numImages):
