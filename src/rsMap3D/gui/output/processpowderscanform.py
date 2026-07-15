@@ -11,8 +11,8 @@ from rsMap3D.mappers.powderscanmapper import PowderScanMapper, X_COORD_OPTIONS,\
 from rsMap3D.mappers.output.powderscanwriter import PowderScanWriter
 logger = logging.getLogger(__name__)
 
-import PyQt5.QtGui as qtGui
-import PyQt5.QtWidgets as qtWidgets
+import PySide6.QtGui as qtGui
+import PySide6.QtWidgets as qtWidgets
 
 from rsMap3D.gui.output.abstractoutputview import AbstractOutputView
 

@@ -5,9 +5,9 @@
 import logging
 logger = logging.getLogger(__name__)
 
-import PyQt5.QtCore as qtCore
-import PyQt5.QtGui as qtGui
-import PyQt5.QtWidgets as qtWidgets
+import PySide6.QtCore as qtCore
+import PySide6.QtGui as qtGui
+import PySide6.QtWidgets as qtWidgets
 
 from rsMap3D.gui.input.abstractfileview import AbstractFileView
 

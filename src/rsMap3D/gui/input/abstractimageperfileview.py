@@ -6,11 +6,11 @@ import logging
 from rsMap3D.config.rsmap3dlogging import METHOD_EXIT_STR, METHOD_ENTER_STR
 logger = logging.getLogger(__name__)
 
-import PyQt5.QtGui as qtGui
-import PyQt5.QtWidgets as qtWidgets
-import PyQt5.QtCore as qtCore
+import PySide6.QtGui as qtGui
+import PySide6.QtWidgets as qtWidgets
+import PySide6.QtCore as qtCore
 
-from  PyQt5.QtCore import pyqtSlot as Slot
+from PySide6.QtCore import Slot
 
 import os.path
 import abc

@@ -4,10 +4,10 @@
 '''
 import sys
 import unittest
-import PyQt5.QtGui as qtGui
-import PyQt5.QtCore as qtCore
-import PyQt5.QtWidgets as qtWidgets
-import PyQt5.QtTest as qtTest
+import PySide6.QtGui as qtGui
+import PySide6.QtCore as qtCore
+import PySide6.QtWidgets as qtWidgets
+import PySide6.QtTest as qtTest
 
 from rsMap3D.gui.output.abstractgridoutputform import AbstractGridOutputForm \
     as AGOutForm

@@ -6,11 +6,11 @@ import os
 import logging
 logger = logging.getLogger(__name__)
 
-import PyQt5.QtCore as qtCore
-import PyQt5.QtGui as qtGui
-import PyQt5.QtWidgets as qtWidgets
+import PySide6.QtCore as qtCore
+import PySide6.QtGui as qtGui
+import PySide6.QtWidgets as qtWidgets
 
-from  PyQt5.QtCore import pyqtSignal as Signal
+from PySide6.QtCore import Signal
 
 import abc
 

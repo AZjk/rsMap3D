@@ -8,9 +8,9 @@ import logging
 from rsMap3D.config.rsmap3dlogging import METHOD_ENTER_STR, METHOD_EXIT_STR
 logger = logging.getLogger(__name__)
 
-import PyQt5.QtGui as qtGui
-import PyQt5.QtCore as qtCore
-import PyQt5.QtWidgets as qtWidgets
+import PySide6.QtGui as qtGui
+import PySide6.QtCore as qtCore
+import PySide6.QtWidgets as qtWidgets
 
 from rsMap3D.gui.input.abstractfileview import AbstractFileView
 from rsMap3D.datasource.DetectorGeometryForXrayutilitiesReader \
@@ -54,7 +54,7 @@ class UsesXMLDetectorConfig(AbstractFileView):
         self.detFileOk = False
         logger.debug(METHOD_EXIT_STR)
         
-#    @qtCore.pyqtSlot()
+#    @qtCore.Slot()
     def _browseForDetFile(self):
         '''
         Launch file selection dialog for Detector file.
@@ -109,8 +109,8 @@ class UsesXMLDetectorConfig(AbstractFileView):
         label = qtWidgets.QLabel("Detector ROI:");
         self.detROITxt = qtWidgets.QLineEdit()
         self.updateROITxt()
-        rxROI = qtCore.QRegExp(self.DET_ROI_REGEXP_1)
-        self.detROITxt.setValidator(qtGui.QRegExpValidator(rxROI,self.detROITxt))
+        rxROI = qtCore.QRegularExpression(self.DET_ROI_REGEXP_1)
+        self.detROITxt.setValidator(qtGui.QRegularExpressionValidator(rxROI,self.detROITxt))
         
         if (silent==False):
             layout.addWidget(label, row, 0)
@@ -124,14 +124,14 @@ class UsesXMLDetectorConfig(AbstractFileView):
         logger.debug(METHOD_ENTER_STR)
         label = qtWidgets.QLabel("Number of Pixels To Average:");
         self.pixAvgTxt = qtWidgets.QLineEdit("1,1")
-        rxAvg = qtCore.QRegExp(self.PIX_AVG_REGEXP_1)
-        self.pixAvgTxt.setValidator(qtGui.QRegExpValidator(rxAvg,self.pixAvgTxt))
+        rxAvg = qtCore.QRegularExpression(self.PIX_AVG_REGEXP_1)
+        self.pixAvgTxt.setValidator(qtGui.QRegularExpressionValidator(rxAvg,self.pixAvgTxt))
         if (silent == False):
             layout.addWidget(label, row, 0)
             layout.addWidget(self.pixAvgTxt, row, 1)
         logger.debug(METHOD_EXIT_STR)
 
-#    @qtCore.pyqtSlot(str)
+#    @qtCore.Slot(str)
     def _currentDetectorChanged(self, currentDetector):
         logger.debug(METHOD_ENTER_STR % str(currentDetector))
         self.currentDetector = str(currentDetector)
@@ -140,7 +140,7 @@ class UsesXMLDetectorConfig(AbstractFileView):
            self.updateROIandNumAvg()
         logger.debug(METHOD_EXIT_STR  % self.currentDetector)
         
-#    @qtCore.pyqtSlot()
+#    @qtCore.Slot()
     def _detConfigChanged(self):
         '''
         '''
@@ -189,7 +189,7 @@ class UsesXMLDetectorConfig(AbstractFileView):
         logger.debug(METHOD_EXIT_STR + str(detFileExists))
         return detFileExists
         
-#    @qtCore.pyqtSlot(str)
+#    @qtCore.Slot(str)
     def _detROITxtChanged(self, text):
         '''
         Check to make sure the text for detector roi is valid and indicate 
@@ -213,8 +213,8 @@ class UsesXMLDetectorConfig(AbstractFileView):
         Check to make sure the text for is a vaid detector roi
         '''
         logger.debug(METHOD_ENTER_STR)
-        rxROI = qtCore.QRegExp(self.DET_ROI_REGEXP_2)
-        validator = qtGui.QRegExpValidator(rxROI, None)
+        rxROI = qtCore.QRegularExpression(self.DET_ROI_REGEXP_2)
+        validator = qtGui.QRegularExpressionValidator(rxROI, None)
         pos = 0
         if validator.validate(text, pos)[0] == qtGui.QValidator.Acceptable:
             roiVals = self.getDetectorROI(rois=str(text))
