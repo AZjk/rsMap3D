@@ -3,11 +3,11 @@
  See LICENSE file.
 '''
 import signal
-import PyQt5.QtCore as qtCore
-import PyQt5.QtWidgets as qtWidgets
+import PySide6.QtCore as qtCore
+import PySide6.QtWidgets as qtWidgets
  
-from  PyQt5.QtCore import pyqtSignal as Signal
-from  PyQt5.QtCore import pyqtSlot as Slot
+from PySide6.QtCore import Signal
+from PySide6.QtCore import Slot
 from rsMap3D.gui.scanform import ScanForm
 from rsMap3D.gui.datarange import DataRange
 from rsMap3D.gui.dataextentview import DataExtentView
@@ -126,14 +126,14 @@ class MainDialog(qtWidgets.QMainWindow):
     def getDataSource(self):
         return self.fileForm.dataSource
     
-    @qtCore.pyqtSlot()
+    @qtCore.Slot()
     def getOutputForms(self):
         return self.fileForm.getOutputForms()    
 
     def getTransform(self):
         return self.fileForm.transform
         
-    @qtCore.pyqtSlot()
+    @qtCore.Slot()
     def _loadDataSourceToScanForm(self):
         '''
         When scan is done loading, load the data to the scan form.
@@ -141,7 +141,7 @@ class MainDialog(qtWidgets.QMainWindow):
         self.scanForm.loadScanFile(self.fileForm.dataSource)        
         
         
-    @qtCore.pyqtSlot()
+    @qtCore.Slot()
     def _setupRanges(self):
         '''
         Get the overall data extent from the data source and set these values
@@ -168,7 +168,7 @@ class MainDialog(qtWidgets.QMainWindow):
         self.fileForm.dataSource.setRangeBounds(ranges)
         self.scanForm.renderOverallQs()
 
-    @qtCore.pyqtSlot(str)
+    @qtCore.Slot(str)
     def _showFileError(self, error):
         '''
         Show any errors from file loading in a message dialog.  When done, 
@@ -240,7 +240,7 @@ def main():
     timer = qtCore.QTimer()
     timer.start(1000)
     timer.timeout.connect(lambda: None)
-    app.exec_()
+    app.exec()
 
 if __name__ == "__main__":
     main()
