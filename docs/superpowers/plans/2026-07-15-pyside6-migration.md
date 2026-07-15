@@ -79,6 +79,19 @@ Task 3 (Layer 1) is already committed and reviewed, but 2 of its files have the 
 - [ ] Verify both files still import cleanly, re-run `QT_QPA_PLATFORM=offscreen pytest tests/gui/output/test_abstractgridoutputview.py -v` (Layer 1's test) and confirm it still passes.
 - [ ] Commit: `git commit -m "Fix currentIndexChanged[str] -> currentTextChanged in Layer 1 files (usescommonoutputtype.py, processvtioutputform.py): Qt6 removed the (str) overload"`
 
+**Second discovery during Task 5 verification (added here after the fact):** all 3 GUI test files construct a module-level `QApplication` unconditionally: `app = qtWidgets.QApplication(sys.argv)` in `tests/gui/input/test_s33specscanfileform.py:14`, `tests/gui/output/test_abstractgridoutputview.py:17`, `tests/gui/output/test_abstractoutputview.py:14`. Empirically confirmed: **PyQt5 silently tolerates constructing a second `QApplication` in the same process (returns a new wrapper, no error); PySide6/shiboken raises `RuntimeError: libshiboken: Please destroy the QApplication singleton before creating a new QApplication instance.`** This is a genuine behavioral difference between the two bindings, not a pre-existing issue — reproduced directly: `PyQt5.QtWidgets.QApplication(sys.argv)` called twice in one process succeeds; the identical call with `PySide6.QtWidgets.QApplication` raises on the second call. Since pytest imports every test module into the same process, collecting more than one of these 3 GUI test files together (exactly what Task 9's whole-suite run does) will crash after the first one. Fix: guard the construction so it reuses any existing instance:
+```python
+app = qtWidgets.QApplication(sys.argv)
+```
+becomes
+```python
+app = qtWidgets.QApplication.instance() or qtWidgets.QApplication(sys.argv)
+```
+in all 3 files. Ownership:
+- `tests/gui/input/test_s33specscanfileform.py:14` — Task 5's own file, fix as part of properly completing that task.
+- `tests/gui/output/test_abstractgridoutputview.py:17` — Layer 1, Task 3, already committed — fix via a new, separate correction commit (do not amend Task 3's original commit).
+- `tests/gui/output/test_abstractoutputview.py:14` — Layer 0, Task 2, already committed — same correction commit as the line above (both are test-file-only changes, can be one commit).
+
 ---
 
 ### Task 1: Add PySide6 dependency; delete dead Qt4-era code
