@@ -1,0 +1,15 @@
+PyQt5
+vtk
+numpy
+xrayutilities
+h5py
+hdf5plugin
+matplotlib
+spec2nexus
+pillow
+
+[dev]
+pytest
+
+[xpcs]
+pyepics

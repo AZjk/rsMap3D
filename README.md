@@ -1,3 +1,5 @@
+# rsMap3D
+
 rsMap3D is a Python program for transforming a set of images collected as part of an 
 x-ray scattering experiment into a 3D reciprocal space map.  
 

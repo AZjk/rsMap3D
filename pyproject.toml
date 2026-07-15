@@ -1,0 +1,42 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "rsMap3D"
+version = "1.3.1"
+description = "Python program to map x-ray diffraction data into a reciprocal space map"
+readme = "README.md"
+license = {file = "LICENSE"}
+authors = [
+    {name = "John Hammonds"},
+    {name = "Christian Schleputz"},
+]
+requires-python = ">=3.9"
+dependencies = [
+    "PyQt5",
+    "vtk",
+    "numpy",
+    "xrayutilities",
+    "h5py",
+    "hdf5plugin",
+    "matplotlib",
+    "spec2nexus",
+    "pillow",
+]
+
+[project.optional-dependencies]
+xpcs = ["pyepics"]
+dev = ["pytest"]
+
+[project.scripts]
+rsMap3D = "rsMap3D.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+rsMap3D = ["resources/*.xml"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

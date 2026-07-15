@@ -1,0 +1,225 @@
+Metadata-Version: 2.4
+Name: rsMap3D
+Version: 1.3.1
+Summary: Python program to map x-ray diffraction data into a reciprocal space map
+Author: John Hammonds, Christian Schleputz
+License: Copyright (c) 2012, UChicago Argonne, LLC
+         
+        All Rights Reserved
+         
+        rsMap3D
+        
+        Software Services Group
+        Surface Scattering and Micro-diffraction Group
+        Advanced Photon Source
+        Argonne National Laboratory
+        
+        Contributing Authors:
+        John Hammonds (JPHammonds@anl.gov)
+        Christian Schleputz (cschlep@aps.anl.gov)
+        
+        OPEN SOURCE LICENSE
+         
+        Redistribution and use in source and binary forms, with or without  
+        modification, are permitted provided that the following conditions are met:
+         
+        1. Redistributions of source code must retain the above copyright notice,  
+           this list of conditions and the following disclaimer.  Software changes,  
+           modifications, or derivative works, should be noted with comments and  
+           the author and organization's name.
+         
+        2. Redistributions in binary form must reproduce the above copyright notice,
+           this list of conditions and the following disclaimer in the documentation  
+           and/or other materials provided with the distribution.
+         
+        3. Neither the names of UChicago Argonne, LLC or the Department of Energy  
+           nor the names of its contributors may be used to endorse or promote  
+           products derived from this software without specific prior written  
+           permission.
+         
+        4. The software and the end-user documentation included with the  
+           redistribution, if any, must include the following acknowledgment:
+         
+           "This product includes software produced by UChicago Argonne, LLC  
+           under Contract No. DE-AC02-06CH11357 with the Department of Energy."
+         
+        ****************************************************************************
+         
+        DISCLAIMER
+         
+        THE SOFTWARE IS SUPPLIED "AS IS" WITHOUT WARRANTY OF ANY KIND.
+         
+        Neither the United States GOVERNMENT, nor the United States Department  
+        of Energy, NOR UChicago Argonne, LLC, nor any of their employees, makes  
+        any warranty, express or implied, or assumes any legal liability or  
+        responsibility for the accuracy, completeness, or usefulness of any  
+        information, data, apparatus, product, or process disclosed, or  
+        represents that its use would not infringe privately owned rights.
+         
+        ****************************************************************************
+Requires-Python: >=3.9
+Description-Content-Type: text/markdown
+License-File: LICENSE
+Requires-Dist: PyQt5
+Requires-Dist: vtk
+Requires-Dist: numpy
+Requires-Dist: xrayutilities
+Requires-Dist: h5py
+Requires-Dist: hdf5plugin
+Requires-Dist: matplotlib
+Requires-Dist: spec2nexus
+Requires-Dist: pillow
+Provides-Extra: xpcs
+Requires-Dist: pyepics; extra == "xpcs"
+Provides-Extra: dev
+Requires-Dist: pytest; extra == "dev"
+Dynamic: license-file
+
+# rsMap3D
+
+rsMap3D is a Python program for transforming a set of images collected as part of an 
+x-ray scattering experiment into a 3D reciprocal space map.  
+
+
+Version 1.0.8 of xrayutilities was tested on Windows 7 with:
+      6/10/2016
+      xrayutilities-1.2.1-cp27-cp27m-win_amd64.whl found at 
+      https://confluence.aps.anl.gov/display/RSM/Binary+Distributions+of+Python+Packages
+      
+      spec2nexus 2016.0601.0 installed via pip install from pypi.
+      
+      For Mac and Linux, it is best to use the same versions from pypi install 
+      with pip install
+      
+      Fixed an issue with calculating angles when doing sixc geometry and 
+      scanning a real angle.  The code was acting like it needed to compute from
+      pseudo angle scan.
+      
+Version 1.0.9 testes with same versions as above:
+      Fixed an issue with pole figure maps.  Had a couple of bugs left from
+      recent refactoring.
+      
+Version 1.0.10 
+      Test with  same xrayutilites
+      Add code to Sector33SpecDataSource to handle runs that have been aborted.
+      To work with spec files that have beamline specific entries, not handled by 
+      a plugin must have spec2nexus version 2016.0615.1. 
+
+Version 1.0.13   -  2016/10/27
+      The structure of input and output controls, and on the back end DataSource 
+      classes and Mapper classes have been reworked to allow output of data to 
+      different formats.  In particular, the input Forms hold information on what 
+      type of output is allowed/needed for that kind of data.  Up till this point,
+      only output to VTI files was allowed.  A stock list of input forms is still 
+      provided.  A pull-down combo box allows switching between input forms,  As
+      a different form is selected, a list of allowed output forms is created and 
+      placed on the "Process Data" tab.  The default form is set active.  Each output 
+      form can then also specify a list of "Writers" to be used for selecting the format
+      of the output data.  At this point vti (the only choice till now), a stack of TIFF 
+      images, slicing through the 3D volume, and for XPCS data, a CSV file containing the 
+      qx, qy, qz values for the single position used to collect time series data in an 
+      XPCS scan.
+      Energy scan data from sector 34 is working, but at present writes only VTI files.
+      The Sector 33 scan format is working for sector 7, & 30.  Still working along with
+      these beamlines to do some post processing.
+      
+Version 1.0.14   -  2016/10/27
+      Needed to fix list of packages in setup.py did a re-release.      
+
+Version 1.0.15   -  2016/10/27
+      Needed to fix list of packages in setup.py did a re-release.
+      
+Version 1.0.16   -  2016/10/31
+      Needed to fix handling method when pyimm is not found.ZZ
+      
+Version 1.0.17	- Changes to allow output of ascii vti file.
+
+Version 1.0.18	- 2016-11-8 
+       Readd missing string constant in common strings file.
+       
+Version 1.0.19	- 2016-11-8 
+       Readd missing string logger constants in common strings file.
+       
+Version 1.0.20  - 2017-03-03
+		Changed the Signal/Slot mechanism to use a newer version that will be 
+		used moving forward.  This will allow moving more easily to Python 3 and
+		PyQt 5.x.  Note that for now there are issues with VTK/PyQt integration
+		with PyQt 5.x so for now need to stick with PyQt 4.11 and Python 2.7.
+		Fixed a problem introduced when the output of data was split out into 
+		writers.  The calculation of y data (qy or k) was using x-data instead of 
+		Y.  This did not cause a problem when X&Y were using same range but
+		when they were different, qy/k was wrong.
+		
+Version 1.1.0   - 2017-05-22
+        Switch Configuration to use python's config parser
+        Made it possible to edit which 
+        
+Version 1.1.1    - 2017-06-08
+        Change the angle mapping code esp in S33SpecDataSource so that the angle
+        mapping function can live in a module outside of the S33SpecDataSource 
+        class.  This will make it easier for the user to add mapping functions.
+        Now they would simply need to add a module to the PYTHONPATH, and add 
+        the module name (w/ package path if necessary).  
+
+Version 1.1.2    - 2017-06-08
+	Revert s1highenergydatasource to a previous version with no mpi
+
+Version 1.1.3    - 2017-06-08
+	Remove @profile from s1highenergydatasource
+
+Version 1.1.4    - 2017-06-08
+	Remove @profile from s1highenergydatasource didn't take last time.
+
+Version 1.1.5    - 2017-08-01	
+    Add support for ccdscans from the XPCS beamlines.  This uses spec to scan 
+    and store angle information and IMM files (local to APS) to store images.
+    The spec file has '#CCD ccdscan scannum' line to indicate this type of scan.
+    For now supporting subtraction of dark images (averaged without the first 
+    dark Image, reading the location of files from the '#CCD image_dir' line
+    and replacing the base part of this image directory for cases where the 
+    data has been copied to another computer.
+	
+Version 1.1.6     - 2017-08-04
+    To keep up with some interpreter versions being sensitive to this have
+    switched '== None' with 'is None'
+    
+Version 1.1.7
+    Add powderscan output for sector 33.  
+    Play around with new setup.py.  Added resources directory with example xml
+    and also get the LICENSE file into the distro.
+    
+Version 1.1.8   2017-11-7
+    Fix problem selecting only a one or two images to process from a scan.  This 
+    caused a problem if the size of the scan was such that processing was
+    done in a number of passes based on user defined amount of memory to use 
+    and the size and number of images to process.  
+    Add Powder scan form into the S33 scan form.
+    
+Version 1.1.9   2017-11-7
+    Fix Gridmapper to show 100% when done.
+    Fix S1 to show 100% when done loading.
+    
+Version 1.2.0rc1 2019-04-02
+    The major change is to switch to Python 3 and PyQt5, and VTK 8.2, with 
+    as little change to the overall code as psosible.  So far, this has
+    been tested on Mac with Anaconda Python (custom version has been updated),
+    with conda 4.6.7(conda-build version: 3.4.1), python 3.6.8.final.0.
+    
+Version 1.2.0rc2 2019-04-02
+    Fix a bug creating an new configuration file when one does not exist.  
+
+Version 1.2.0rc2 2019-04-02
+    Mostly fix issues in Py2 to 3 conversion.  File dialogs now return a 
+    list even for single file operations.  Needed to pick list element as 0th
+    element in using single file selection. 
+    
+Version 1.2.0rc4 2019-04-02
+    Fix a problem with extracting the UB matrix from the scan file.  This 
+    was due to a change in Pythons built-in 'map' function.  This caused 
+    a problem using the output to create a numpy array.
+    
+Version 1.2.1  2019-07-11
+    Finalize 1.2 release & add a function to copy one motor columns data to another
+    column.  This is useful when both sample and detector have the same motor.  
+    Cannot include the same motor twice.  This allows setting up a dummy motor 
+    to copy another array into it.
