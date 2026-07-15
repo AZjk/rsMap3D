@@ -14,9 +14,9 @@ from rsMap3D.gui.input.usescommonoutputtype import UsesCommonOutputTypes
 from rsMap3D.config.rsmap3dlogging import METHOD_ENTER_STR, METHOD_EXIT_STR
 logger = logging.getLogger(__name__)
 
-import PyQt5.QtGui as qtGui
-import PyQt5.QtCore as qtCore
-import PyQt5.QtWidgets as qtWidgets
+import PySide6.QtGui as qtGui
+import PySide6.QtCore as qtCore
+import PySide6.QtWidgets as qtWidgets
 
 from rsMap3D.gui.input.abstractimageperfileview import AbstractImagePerFileView
 
@@ -41,8 +41,8 @@ class S1HighEnergyDiffractionForm(AbstractImagePerFileView, \
     HED_IMAGE_FILE_FILTER = "S1 corrected files *.par"
     
     # Set up signals for this class
-    updateParInfo = qtCore.pyqtSignal(int, name=UPDATE_PAR_INFO)
-    resetParInfo = qtCore.pyqtSignal(name=RESET_PAR_INFO)
+    updateParInfo = qtCore.Signal(int, name=UPDATE_PAR_INFO)
+    resetParInfo = qtCore.Signal(name=RESET_PAR_INFO)
 
     @staticmethod
     def createInstance(parent=None, appConfig=None):
@@ -68,7 +68,7 @@ class S1HighEnergyDiffractionForm(AbstractImagePerFileView, \
         
         logger.debug(METHOD_EXIT_STR)
         
-    @qtCore.pyqtSlot()
+    @qtCore.Slot()
     def _browseForImageDir(self):
         logger.debug("Entering")
         if self.imageDirTxt.text() == EMPTY_STR:
@@ -233,13 +233,13 @@ class S1HighEnergyDiffractionForm(AbstractImagePerFileView, \
             self._incidentEnergyOverrideChanged)
         self.offsetAngleTxt.editingFinished.connect(
             self._offsetAngleChanged)
-        self.detSelect.currentIndexChanged[str].connect(self._detectorSelectedIndexChanged)
+        self.detSelect.currentTextChanged.connect(self._detectorSelectedIndexChanged)
         logger.debug("Exiting")
         
         
         return dataBox
     
-    @qtCore.pyqtSlot()
+    @qtCore.Slot()
     def _detectorDistanceOverrideChanged(self):
         logger.debug(METHOD_ENTER_STR)
         overrideDistance = float(self.detectorDistanceOverrideTxt.text())
@@ -254,7 +254,7 @@ class S1HighEnergyDiffractionForm(AbstractImagePerFileView, \
             self.detectorDistanceActive.setText(str(self.detectorDistance))
         logger.debug(METHOD_EXIT_STR)
         
-    @qtCore.pyqtSlot(str)
+    @qtCore.Slot(str)
     def _detectorSelectedIndexChanged(self, currentDetector):
         logger.debug(METHOD_ENTER_STR)
         if float(self.detectorDistanceOverrideTxt.text()) == 0.0:
@@ -358,7 +358,7 @@ class S1HighEnergyDiffractionForm(AbstractImagePerFileView, \
         logger.debug(METHOD_EXIT_STR + str(outputForms))
         return outputForms
 
-    @qtCore.pyqtSlot()
+    @qtCore.Slot()
     def _imageDirChanged(self):
         logger.debug(METHOD_ENTER_STR)
         if os.path.isdir(self.imageDirTxt.text()) or \
@@ -372,7 +372,7 @@ class S1HighEnergyDiffractionForm(AbstractImagePerFileView, \
                              "The IMM file entered is invalid")
         logger.debug(METHOD_EXIT_STR)
 
-    @qtCore.pyqtSlot()
+    @qtCore.Slot()
     def _incidentEnergyOverrideChanged(self):
         logger.debug(METHOD_ENTER_STR)
         self.incidentEnergyOverride = float(self.incidentEnergyOverrideTxt.text())
@@ -384,22 +384,22 @@ class S1HighEnergyDiffractionForm(AbstractImagePerFileView, \
             self.incidentEnergyActive.setText((str(self.incidentEnergyOverride)))
         logger.debug(METHOD_EXIT_STR)
         
-    @qtCore.pyqtSlot()
+    @qtCore.Slot()
     def _offsetAngleChanged(self):
         logger.debug(METHOD_ENTER_STR)
         state = self.angleLimitValidator.validate(self.offsetAngleTxt.text(),0)
         logger.debug(METHOD_EXIT_STR + str(state))
         
-    @qtCore.pyqtSlot(int)
+    @qtCore.Slot(int)
     def _parFileLineChanged(self, lineNum):
         self.updateParInfo.emit(lineNum)
     
-    @qtCore.pyqtSlot()
+    @qtCore.Slot()
     def _resetParInfo(self):
         self.angleRange.setText(self.WAITING_FOR_INPUT)
         self.fileInfo.setText(self.WAITING_FOR_INPUT)        
 
-    @qtCore.pyqtSlot(int)
+    @qtCore.Slot(int)
     def _updateParInfo(self, lines):
         logger.debug("lines: " + str(lines))
         angleData = self.parFile.getAngleData([lines,])

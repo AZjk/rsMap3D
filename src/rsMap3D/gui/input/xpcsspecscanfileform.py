@@ -6,9 +6,9 @@ import os
 import logging
 from spec2nexus.spec import SpecDataFile
 logger = logging.getLogger(__name__)
-import PyQt5.QtGui as qtGui
-import PyQt5.QtCore as qtCore
-import PyQt5.QtWidgets as qtWidgets
+import PySide6.QtGui as qtGui
+import PySide6.QtCore as qtCore
+import PySide6.QtWidgets as qtWidgets
 
 from rsMap3D.gui.output.processvtioutputform import ProcessVTIOutputForm
 from rsMap3D.gui.output.processxpcsgridlocationform import ProcessXpcsGridLocationForm
@@ -202,7 +202,7 @@ class XPCSSpecScanFileForm(SpecXMLDrivenFileForm):
         return os.path.isdir(self.replacePathWithTxt.text()) or \
             (self.replacePathWithTxt.text() == EMPTY_STR)
             
-    @qtCore.pyqtSlot()
+    @qtCore.Slot()
     def _pathToReplaceChanged(self):
         if self.isXpcsFileNameOK():
             self.checkOkToLoad()
@@ -213,7 +213,7 @@ class XPCSSpecScanFileForm(SpecXMLDrivenFileForm):
                              , \
                              "The path To replace is invalid")
 
-    @qtCore.pyqtSlot()
+    @qtCore.Slot()
     def _replacePathWithChanged(self):
         if self.isReplacePathWithNameOK():
             self.checkOkToLoad()

@@ -8,9 +8,9 @@ import logging
 from rsMap3D.config.rsmap3dlogging import METHOD_ENTER_STR, METHOD_EXIT_STR
 from rsMap3D.gui.output.processpowderscanform import ProcessPowderScanForm
 logger = logging.getLogger(__name__)
-import PyQt5.QtGui as qtGui
-import PyQt5.QtCore as qtCore
-import PyQt5.QtWidgets as qtWidgets
+import PySide6.QtGui as qtGui
+import PySide6.QtCore as qtCore
+import PySide6.QtWidgets as qtWidgets
 
 from rsMap3D.gui.rsm3dcommonstrings import WARNING_STR, BROWSE_STR,\
     COMMA_STR, QLINEEDIT_COLOR_STYLE, BLACK, RED, EMPTY_STR,\
@@ -22,7 +22,7 @@ from rsMap3D.transforms.polemaptransform3d import PoleMapTransform3D
 from rsMap3D.gui.input.specxmldrivenfileform import SpecXMLDrivenFileForm
 from rsMap3D.gui.output.processvtioutputform import ProcessVTIOutputForm
 from rsMap3D.gui.output.processimagestackform import ProcessImageStackForm
-from PyQt5.QtWidgets import QAbstractButton
+from PySide6.QtWidgets import QAbstractButton
 
 class S33SpecScanFileForm(SpecXMLDrivenFileForm):
     '''
@@ -60,7 +60,7 @@ class S33SpecScanFileForm(SpecXMLDrivenFileForm):
         self._fieldCorrectionTypeChanged(*(self.noFieldRadio,))
         logger.debug(METHOD_EXIT_STR)
         
-    @qtCore.pyqtSlot()
+    @qtCore.Slot()
     def _badPixelFileChanged(self):
         '''
         Do some verification when the bad pixel file changes
@@ -78,7 +78,7 @@ class S33SpecScanFileForm(SpecXMLDrivenFileForm):
         logger.debug(METHOD_EXIT_STR)
             
                 
-    @qtCore.pyqtSlot()
+    @qtCore.Slot()
     def _browseBadPixelFileName(self):
         '''
         Launch file browser for bad pixel file
@@ -99,7 +99,7 @@ class S33SpecScanFileForm(SpecXMLDrivenFileForm):
             self.badPixelFileTxt.editingFinished.emit()
         logger.debug(METHOD_EXIT_STR)
 
-    @qtCore.pyqtSlot()
+    @qtCore.Slot()
     def _browseFlatFieldFileName(self):
         '''
         Launch file browser for Flat field file
@@ -196,8 +196,8 @@ class S33SpecScanFileForm(SpecXMLDrivenFileForm):
         row += 1
         label = qtWidgets.QLabel("Number of Pixels To Average:");
         self.pixAvgTxt = qtWidgets.QLineEdit("1,1")
-        rxAvg = qtCore.QRegExp(self.PIX_AVG_REGEXP_1)
-        self.pixAvgTxt.setValidator(qtGui.QRegExpValidator(rxAvg,self.pixAvgTxt))
+        rxAvg = qtCore.QRegularExpression(self.PIX_AVG_REGEXP_1)
+        self.pixAvgTxt.setValidator(qtGui.QRegularExpressionValidator(rxAvg,self.pixAvgTxt))
         dataLayout.addWidget(label, row, 0)
         dataLayout.addWidget(self.pixAvgTxt, row, 1)
 
@@ -232,7 +232,7 @@ class S33SpecScanFileForm(SpecXMLDrivenFileForm):
         logger.debug(METHOD_EXIT_STR)
         return dataBox
     
-    @qtCore.pyqtSlot(QAbstractButton)
+    @qtCore.Slot(QAbstractButton)
     def _fieldCorrectionTypeChanged(self, *fieldCorrType):
         '''
         React when the field type radio buttons change.  Disable/Enable other 
@@ -257,7 +257,7 @@ class S33SpecScanFileForm(SpecXMLDrivenFileForm):
         self.checkOkToLoad()
         logger.debug(METHOD_EXIT_STR)
             
-    @qtCore.pyqtSlot()           
+    @qtCore.Slot()
     def _flatFieldFileChanged(self):
         '''
         Do some verification when the flat field file changes
@@ -389,8 +389,8 @@ class S33SpecScanFileForm(SpecXMLDrivenFileForm):
         '''
         logger.debug(METHOD_ENTER_STR)
         retVal = False
-        rxPixAvg = qtCore.QRegExp(self.PIX_AVG_REGEXP_2)
-        validator = qtGui.QRegExpValidator(rxPixAvg, None)
+        rxPixAvg = qtCore.QRegularExpression(self.PIX_AVG_REGEXP_2)
+        validator = qtGui.QRegularExpressionValidator(rxPixAvg, None)
         pos = 0
         if validator.validate(text, pos)[0] == qtGui.QValidator.Acceptable:
             retVal = True

@@ -3,9 +3,9 @@
  See LICENSE file.
 '''
 import os.path
-import PyQt5.QtGui as qtGui
-import PyQt5.QtCore as qtCore
-import PyQt5.QtWidgets as qtWidgets
+import PySide6.QtGui as qtGui
+import PySide6.QtCore as qtCore
+import PySide6.QtWidgets as qtWidgets
 
 from rsMap3D.gui.input.abstractimageperfileview import AbstractImagePerFileView
 from rsMap3D.gui.rsm3dcommonstrings import BROWSE_STR, EMPTY_STR,\
@@ -42,7 +42,7 @@ class S34HDFEScanFileForm(AbstractImagePerFileView):
         self.layout.addWidget(controlBox)
         self.setLayout(self.layout);
 
-    @qtCore.pyqtSlot()
+    @qtCore.Slot()
     def _browseForDetFile(self):
         '''
         Launch file selection dialog for Detector file.
@@ -118,12 +118,12 @@ class S34HDFEScanFileForm(AbstractImagePerFileView):
         # Add Signals between widgets
         self.detConfigFileButton.clicked.connect(self._browseForDetFile)
         self.detConfigTxt.editingFinished.connect(self._detConfigChanged)
-        self.outTypeChooser.currentIndexChanged[str].\
+        self.outTypeChooser.currentTextChanged.\
             connect(self._outputTypeChanged)
         
         return dataBox
 
-    @qtCore.pyqtSlot()
+    @qtCore.Slot()
     def _detConfigChanged(self):
         '''
         '''
@@ -182,7 +182,7 @@ class S34HDFEScanFileForm(AbstractImagePerFileView):
         outputForms.append(ProcessVTIOutputForm)
         return outputForms
 
-    @qtCore.pyqtSlot(str)
+    @qtCore.Slot(str)
     def _outputTypeChanged(self, typeStr):
         '''
         If the output is selected to be a simple grid map type then allow
