@@ -39,6 +39,7 @@ from rsMap3D.mappers.output.powderscanwriter import PowderScanWriter
 from rsMap3D.mappers.powderscanmapper import PowderScanMapper
 from rsMap3D.transforms.unitytransform3d import UnityTransform3D
 from rsMap3D.utils.srange import srange
+from rsMap3D.workflows._common import configure_console_logging
 
 logger = logging.getLogger(__name__)
 
@@ -67,6 +68,8 @@ def run(config):
     Reduce one or more spec scans per dataset into 1D powder-diffraction
     curves (.xye files), one curve per scan (or per combined scan-range).
     '''
+    configure_console_logging()
+
     projectDir = config["project_dir"]
     configDir = config["config_dir"]
     detectorName = config["detector_name"]

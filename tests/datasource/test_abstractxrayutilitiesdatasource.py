@@ -7,10 +7,6 @@ from rsMap3D.datasource.AbstractXrayUtilitiesDataSource import \
     AbstractXrayutilitiesDataSource
 from rsMap3D.config.rsmap3dconfigparser import RSMap3DConfigParser
 
-SPEC_FILE = "../../resources/spec/CB_140303A_1.spec"
-INST_CONFIG_1 = "../../resources/33BM-instForXrayutilities.xml"
-DET_CONFIG = "../../resources/33BMDetectorGeometry.xml"
-
 class Test(unittest.TestCase):
 
 

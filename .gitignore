@@ -3,3 +3,4 @@
 .DS_Store
 docs/build/
 *.log
+*.egg-info/

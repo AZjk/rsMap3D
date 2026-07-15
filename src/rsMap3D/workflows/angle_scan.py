@@ -29,28 +29,9 @@ from rsMap3D.mappers.gridmapper import QGridMapper
 from rsMap3D.mappers.output.vtigridwriter import VTIGridWriter
 from rsMap3D.transforms.unitytransform3d import UnityTransform3D
 from rsMap3D.utils.srange import srange
+from rsMap3D.workflows._common import configure_console_logging
 
 logger = logging.getLogger(__name__)
-_logging_configured = False
-
-
-def _configure_console_logging():
-    '''
-    Add a console handler to the root logger the first time this module is
-    used, matching the console output the original standalone script
-    produced. Guarded so repeated calls to run() do not add duplicate
-    handlers.
-    '''
-    global _logging_configured
-    if _logging_configured:
-        return
-    root_logger = logging.getLogger()
-    root_logger.setLevel(logging.INFO)
-    handler = logging.StreamHandler()
-    handler.setFormatter(logging.Formatter(
-        '%(asctime)s - %(name)s - %(levelname)s - %(message)s'))
-    root_logger.addHandler(handler)
-    _logging_configured = True
 
 
 def reindex_specfile(fullFilename):
@@ -140,7 +121,7 @@ def run(config):
     `config` has the same shape as the rsmconfig.json files consumed by
     the historical Scripts/mapSpecAngleScan_v4.2.py script.
     '''
-    _configure_console_logging()
+    configure_console_logging()
 
     startTime = datetime.datetime.now()
     with open('time.log', 'a') as time_log:

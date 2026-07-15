@@ -1,2 +1,0 @@
-[console_scripts]
-rsMap3D = rsMap3D.cli:main
