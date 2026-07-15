@@ -10,8 +10,8 @@ from rsMap3D.exception.rsmap3dexception import RSMap3DException
 
 THIS_DIR = os.path.dirname(os.path.abspath(__file__))
 BAD_FILE_DIRECTORY = os.path.join(THIS_DIR,
-                                  "../../resources/problemFilesForTesting/")
-GOOD_FILE_DIRECTORY = os.path.join(THIS_DIR, "../../resources/")
+                                  "../fixtures/problemFilesForTesting/")
+GOOD_FILE_DIRECTORY = os.path.join(THIS_DIR, "../fixtures/")
 class Test(unittest.TestCase):
 
 

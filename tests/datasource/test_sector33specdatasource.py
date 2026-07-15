@@ -10,17 +10,19 @@ import os
 from rsMap3D.config.rsmap3dlogging import LOGGER_NAME
 from rsMap3D.config.rsmap3dconfigparser import RSMap3DConfigParser
 
+import importlib.resources
+
 THIS_DIR = os.path.dirname(os.path.abspath(__file__))
-PROJECT_DIR = os.path.join(THIS_DIR, "../../resources/spec")
+PROJECT_DIR = os.path.join(THIS_DIR, "../fixtures/spec")
 PROJECT_NAME = "CB_140303A_1"
 PROJECT_EXT = ".spec"
-INST_CONFIG_1 = os.path.join(THIS_DIR, 
-                             "../../resources/33BM-instForXrayutilities.xml")
-DET_CONFIG = os.path.join(THIS_DIR, "../../resources/33bmDetectorGeometry.xml")
+_RESOURCES_DIR = importlib.resources.files('rsMap3D') / 'resources'
+INST_CONFIG_1 = str(_RESOURCES_DIR / "33BM-instForXrayutilities.xml")
+DET_CONFIG = str(_RESOURCES_DIR / "33bmDetectorGeometry.xml")
 CURRENT_DETECTOR = "Pilatus"
-configDir = os.path.join(THIS_DIR, '../../resources/config')
+configDir = os.path.join(THIS_DIR, '../fixtures/config')
 logConfigFile = os.path.join(configDir, LOGGER_NAME + 'Log.test.config')
-print logConfigFile
+print(logConfigFile)
 logging.config.fileConfig(logConfigFile)
 logger = logging.getLogger(LOGGER_NAME)
 

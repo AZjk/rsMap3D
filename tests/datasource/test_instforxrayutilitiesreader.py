@@ -8,35 +8,31 @@ from rsMap3D.datasource.InstForXrayutilitiesReader import \
     InstForXrayutilitiesReader
 from rsMap3D.exception.rsmap3dexception import InstConfigException
 import os
+import importlib.resources
 
 
 THIS_DIR = os.path.dirname(os.path.abspath(__file__))
 
-PROBLEM_FILES_DIR = os.path.join(THIS_DIR,  
-                                 '../../resources/problemFilesForTesting/')
+PROBLEM_FILES_DIR = os.path.join(THIS_DIR,
+                                 '../fixtures/problemFilesForTesting/')
 
 class Test(unittest.TestCase):
 
 
     def setUp(self):
-        self.config = InstForXrayutilitiesReader( \
-                 os.path.join(THIS_DIR, 
-                              '../../resources/33BM-instForXrayutilities.xml'))
-        self.config2 = InstForXrayutilitiesReader( \
-                 os.path.join(THIS_DIR, 
-                      '../../resources/33BM-instForXrayutilities-noMonitor.xml'))
-        self.config3 = InstForXrayutilitiesReader( \
-                 os.path.join(THIS_DIR, 
-                      '../../resources/33BM-instForXrayutilities-noCircles.xml'))
-        self.config4 = InstForXrayutilitiesReader( \
-                 os.path.join(THIS_DIR, 
-                      '../../resources/33BM-instForXrayutilities-noScalingFactor.xml'))
-        self.config5 = InstForXrayutilitiesReader( \
-                 os.path.join(THIS_DIR, 
-                      '../../resources/13BMC_Instrument.xml'))
-        self.config6 = InstForXrayutilitiesReader( \
-                 os.path.join(THIS_DIR, 
-                      '../../resources/7IDC-instForXrayutilitiesFixWrongValuesChiPhi.xml'))
+        resources_dir = importlib.resources.files('rsMap3D') / 'resources'
+        self.config = InstForXrayutilitiesReader(
+                 str(resources_dir / '33BM-instForXrayutilities.xml'))
+        self.config2 = InstForXrayutilitiesReader(
+                 str(resources_dir / '33BM-instForXrayutilities-noMonitor.xml'))
+        self.config3 = InstForXrayutilitiesReader(
+                 str(resources_dir / '33BM-instForXrayutilities-noCircles.xml'))
+        self.config4 = InstForXrayutilitiesReader(
+                 str(resources_dir / '33BM-instForXrayutilities-noScalingFactor.xml'))
+        self.config5 = InstForXrayutilitiesReader(
+                 str(resources_dir / '13BMC_Instrument.xml'))
+        self.config6 = InstForXrayutilitiesReader(
+                 str(resources_dir / '7IDC-instForXrayutilitiesFixWrongValuesChiPhi.xml'))
 
     def tearDown(self):
         pass
@@ -62,25 +58,25 @@ class Test(unittest.TestCase):
 
     def testGetMonitorName(self):
         monitorName = self.config.getMonitorName()
-        self.assertEquals(monitorName, "I0", "getMonitorName")
+        self.assertEqual(monitorName, "I0", "getMonitorName")
 
     def testGetMonitorNameNoMonitor(self):
         monitorName = self.config2.getMonitorName()
-        self.assertEquals(monitorName, None, "getMonitorNameNoMonitor")
+        self.assertEqual(monitorName, None, "getMonitorNameNoMonitor")
 
     def testGetMonitorScaleFactor(self):
         scaleFactor = self.config.getMonitorScaleFactor()
-        self.assertEquals(scaleFactor, 20000, "getMonitorScaleFactor")
+        self.assertEqual(scaleFactor, 20000, "getMonitorScaleFactor")
 
     def testGetMonitorScaleFactorNoMonitor(self):
         monitorName = self.config2.getMonitorScaleFactor()
-        self.assertEquals(monitorName, 1, "getMonitorScaleFactorNoMonitor")
+        self.assertEqual(monitorName, 1, "getMonitorScaleFactorNoMonitor")
 
     def testGetMonitorNameEmptyName(self):
         config = InstForXrayutilitiesReader( PROBLEM_FILES_DIR + \
                       'instEmptyMonitorAndFilter.xml')
         monitorName = config.getMonitorName()
-        self.assertEquals(monitorName, None, 
+        self.assertEqual(monitorName, None, 
                           "testGetMonitorNameEmptyName: expecting: " +\
                           str(None) + \
                           ", got: " + \
@@ -90,7 +86,7 @@ class Test(unittest.TestCase):
         config = InstForXrayutilitiesReader( PROBLEM_FILES_DIR + \
                       'instWhiteSpaceMonitorAndFilter.xml')
         monitorName = config.getMonitorName()
-        self.assertEquals(monitorName, None, 
+        self.assertEqual(monitorName, None, 
                           "testGetMonitorNameWhiteSpace: expecting: " +\
                           str(None) + \
                           ", got: " + \
@@ -98,7 +94,7 @@ class Test(unittest.TestCase):
 
     def testGetMonitorScaleFactorNoScaleFactor(self):
         monitorName = self.config4.getMonitorScaleFactor()
-        self.assertEquals(monitorName, 1, "getMonitorScaleFactorNoScaleFactor")
+        self.assertEqual(monitorName, 1, "getMonitorScaleFactorNoScaleFactor")
 
     def testGetFiterName(self):
         filterName = self.config.getFilterName()
@@ -106,13 +102,13 @@ class Test(unittest.TestCase):
 
     def testGetFilterNameNoMonitor(self):
         filterName = self.config2.getFilterName()
-        self.assertEquals(filterName, None, "getFilterNameNoMonitor")
+        self.assertEqual(filterName, None, "getFilterNameNoMonitor")
 
     def testGetFilterNameEmptyName(self):
         config = InstForXrayutilitiesReader( PROBLEM_FILES_DIR + \
                       'instEmptyMonitorAndFilter.xml')
         filterName = config.getFilterName()
-        self.assertEquals(filterName, None, 
+        self.assertEqual(filterName, None, 
                           "getFilterNameEmptyName: expecting: " +\
                           str(None) + \
                           ", got: " + \
@@ -122,7 +118,7 @@ class Test(unittest.TestCase):
         config = InstForXrayutilitiesReader( PROBLEM_FILES_DIR + \
                       'instWhiteSpaceMonitorAndFilter.xml')
         filterName = config.getFilterName()
-        self.assertEquals(filterName, None, 
+        self.assertEqual(filterName, None, 
                           "getFilterNameWhiteSpace: expecting: " +\
                           str(None) + \
                           ", got: " + \
@@ -130,15 +126,15 @@ class Test(unittest.TestCase):
 
     def testGetFilterScaleFactor(self):
         scaleFactor = self.config.getFilterScaleFactor()
-        self.assertEquals(scaleFactor, 1000000, "getFilterScaleFactor")
+        self.assertEqual(scaleFactor, 1000000, "getFilterScaleFactor")
 
     def testGetFilterScaleFactorNoFilter(self):
         scaleFactor = self.config2.getFilterScaleFactor()
-        self.assertEquals(scaleFactor, 1, "getFilterScaleFactorNoFilter")
+        self.assertEqual(scaleFactor, 1, "getFilterScaleFactorNoFilter")
 
     def testGetFilterScaleFactorNoScaleFactor(self):
         scaleFactor = self.config4.getFilterScaleFactor()
-        self.assertEquals(scaleFactor, 1, "getFilterScaleFactorNoScaleFactor")
+        self.assertEqual(scaleFactor, 1, "getFilterScaleFactorNoScaleFactor")
 
     def testGetDetectorCircles(self):
         circles = self.config.getDetectorCircles()
@@ -250,19 +246,19 @@ class Test(unittest.TestCase):
         
     def testGetSampleAngleMappingFunctionName(self):
         name = self.config5.getSampleAngleMappingFunctionName()
-        self.assertEquals(name, \
+        self.assertEqual(name, \
                           "_calc_eulerian_from_kappa", \
                           "getSampleAngleMappingFunction: " + name)
         
     def testGetSampleAngleMappingFunctionNameNoMap(self):
         name = self.config4.getSampleAngleMappingFunctionName()
-        self.assertEquals(name, \
+        self.assertEqual(name, \
                           "", \
                           "getSampleAngleMappingFunction: " + name)
 
     def testGetSampleAngleMappingCalcOnScannedRef(self):
         calc = self.config5.getSampleAngleMappingCalcOnScannedRef()
-        self.assertEquals(calc, \
+        self.assertEqual(calc, \
                           True, \
                           "getSampleAngleMappingCalcOnScannedRef: " + str(calc))
         
@@ -272,7 +268,7 @@ class Test(unittest.TestCase):
         
     def testGetSampleAngleMappingPrimaryAngles(self):
         angles = self.config5.getSampleAngleMappingPrimaryAngles()
-        self.assertEquals(angles, \
+        self.assertEqual(angles, \
                           [2,3,4], \
                           "getSampleAngleMappingPrimaryAngles: " + str(angles))
 
@@ -298,7 +294,7 @@ class Test(unittest.TestCase):
         
     def testGetSampleAngleMappingRefereceAngles(self):
         angles = self.config5.getSampleAngleMappingReferenceAngles()
-        self.assertEquals(angles, \
+        self.assertEqual(angles, \
                           ['keta', "kap", "kphi"], \
                           "getSampleAngleMappingReferenceAngles: " + str(angles))
 

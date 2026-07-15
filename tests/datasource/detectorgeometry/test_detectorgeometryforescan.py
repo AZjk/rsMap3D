@@ -16,14 +16,14 @@ from rsMap3D.config.rsmap3dlogging import LOGGER_NAME
 
 THIS_DIR = os.path.dirname(os.path.abspath(__file__))
 
-configDir = os.path.join(THIS_DIR, '../../../resources/config')
+configDir = os.path.join(THIS_DIR, '../../fixtures/config')
 logConfigFile = os.path.join(configDir, LOGGER_NAME + 'Log.test.config')
-print logConfigFile
+print(logConfigFile)
 logging.config.fileConfig(logConfigFile)
 logger = logging.getLogger(LOGGER_NAME)
 
 
-FILE_BASE_DIR = os.path.join(THIS_DIR, '../../../resources/34-id-escan/')
+FILE_BASE_DIR = os.path.join(THIS_DIR, '../../fixtures/34-id-escan/')
 DETECTOR_NAME1 ='PE1621 723-3335'
 DETECTOR_NAME2 ='PE0820 763-1807'
 DETECTOR_NAME3 ='PE0820 763-1850'
@@ -54,7 +54,7 @@ class Test(unittest.TestCase):
 
     def testOpenFile(self):
         config = DetectorGeometryForEScan(NORMAL_FILE)
-        if config <> None:
+        if config != None:
             pass
         else:
             self.assertFail()

@@ -16,17 +16,17 @@ GOOD_FILE_NUM_LINES = 8
 
 THIS_DIR = os.path.dirname(os.path.abspath(__file__))
 
-configDir = os.path.join(THIS_DIR, '../../../resources/config')
+configDir = os.path.join(THIS_DIR, '../../fixtures/config')
 logConfigFile = os.path.join(configDir, LOGGER_NAME + 'Log.test.config')
-print logConfigFile
+print(logConfigFile)
 logging.config.fileConfig(logConfigFile)
 logger = logging.getLogger(LOGGER_NAME)
 PAR_FILE1 = os.path.join(THIS_DIR, \
-                         "../../../resources/1-idscan/fastpar_startup_oct16_FF1.par")
+                         "../../fixtures/1-idscan/fastpar_startup_oct16_FF1.par")
 PAR_FILE2 = os.path.join(THIS_DIR, \
-                         "../../../resources/1-idscan/fastpar_startup_oct16_FF1_with_comments.par")
+                         "../../fixtures/1-idscan/fastpar_startup_oct16_FF1_with_comments.par")
 PAR_FILE3 = os.path.join(THIS_DIR, \
-                         "../../../resources/1-idscan/fastpar_startup_oct16_FF1_with_blanks.par")
+                         "../../fixtures/1-idscan/fastpar_startup_oct16_FF1_with_blanks.par")
 
 class Test(unittest.TestCase):
 
@@ -77,7 +77,7 @@ class Test(unittest.TestCase):
         ds.setCurrentDetector('ge3')
         ds.loadSource()
         availableScans = ds.getAvailableScans()
-        self.assertEquals(availableScans, [3,])
+        self.assertEqual(availableScans, [3,])
         
 if __name__ == "__main__":
     #import sys;sys.argv = ['', 'Test.testName']

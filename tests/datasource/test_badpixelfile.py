@@ -15,7 +15,7 @@ class Test(unittest.TestCase):
 
     def setUp(self):
         fileName = os.path.join(THIS_DIR,
-                               "../../resources/badpixels.txt") 
+                               "../fixtures/badpixels.txt")
         self.a = PilatusBadPixelFile(fileName)
         #
 
