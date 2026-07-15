@@ -3,9 +3,9 @@
  See LICENSE file.
 '''
 
-import PyQt5.QtGui as qtGui
-import PyQt5.QtCore as qtCore
-import PyQt5.QtWidgets as qtWidgets
+import PySide6.QtGui as qtGui
+import PySide6.QtCore as qtCore
+import PySide6.QtWidgets as qtWidgets
 
 from rsMap3D.gui.rsmap3dsignals import RANGE_CHANGED_SIGNAL
 from rsMap3D.gui.rsm3dcommonstrings import POSITIVE_INFINITY, NEGATIVE_INFINITY,\
@@ -18,7 +18,7 @@ class DataRange(qtWidgets.QDialog):
     the available scans.
     '''
 
-    rangeChanged = qtCore.pyqtSignal(name=RANGE_CHANGED_SIGNAL)
+    rangeChanged = qtCore.Signal(name=RANGE_CHANGED_SIGNAL)
     
     def __init__(self, parent=None):                
         '''
@@ -93,7 +93,7 @@ class DataRange(qtWidgets.QDialog):
         self.rangeChanged.connect(self._checkOkToApply)
         self.setLayout(layout)
         
-    @qtCore.pyqtSlot()
+    @qtCore.Slot()
     def _applyRange(self):
         '''
         Apply changes by recording them as current values and signaling that 
@@ -107,7 +107,7 @@ class DataRange(qtWidgets.QDialog):
                        float(self.zmaxText.text()))
         self.rangeChanged.emit()
         
-    @qtCore.pyqtSlot()
+    @qtCore.Slot()
     def _checkOkToApply(self):
         '''
         If x, y and z pairs are OK and if the value has changed enable apply. 
@@ -167,7 +167,7 @@ class DataRange(qtWidgets.QDialog):
         self.zValsOk = True
         self.valsChanged = False
         
-    @qtCore.pyqtSlot()
+    @qtCore.Slot()
     def _resetRange(self):
         '''
         Reset the ranges to the last set of applied values.
@@ -201,7 +201,7 @@ class DataRange(qtWidgets.QDialog):
         self.valsChanged = False
         self._checkOkToApply()
         
-    @qtCore.pyqtSlot()
+    @qtCore.Slot()
     def _xValChanged(self):
         '''
         Trigger that the xmin or xmax value has changed
@@ -218,7 +218,7 @@ class DataRange(qtWidgets.QDialog):
         
 
     
-    @qtCore.pyqtSlot()
+    @qtCore.Slot()
     def _yValChanged(self):
         '''
         Trigger that the ymin or ymax value has changed
@@ -233,7 +233,7 @@ class DataRange(qtWidgets.QDialog):
         self.valsChanged = True
         self._checkOkToApply()
     
-    @qtCore.pyqtSlot()
+    @qtCore.Slot()
     def _zValChanged(self):
         '''
         Trigger that the zmin value has changed

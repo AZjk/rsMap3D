@@ -3,9 +3,9 @@
  See LICENSE file.
 '''
 
-import PyQt5.QtGui as qtGui
-import PyQt5.QtCore as qtCore
-import PyQt5.QtWidgets as qtWidgets
+import PySide6.QtGui as qtGui
+import PySide6.QtCore as qtCore
+import PySide6.QtWidgets as qtWidgets
 import sys
 
 
@@ -48,7 +48,7 @@ class DataExtentView(qtWidgets.QFrame):
         self.renWin.GetInteractor().Initialize()
         self.renWin.Render()
         
-    @qtCore.pyqtSlot()
+    @qtCore.Slot()
     def clearRenderWindow(self):
         '''
         Delete all previous objects that were displayed.
@@ -62,7 +62,7 @@ class DataExtentView(qtWidgets.QFrame):
         '''
         return self.vtkMain
 
-    @qtCore.pyqtSlot(object)
+    @qtCore.Slot(object)
     def renderBounds(self, bounds):
         '''
         Render a box with boundaries from the given input
@@ -80,7 +80,7 @@ class DataExtentView(qtWidgets.QFrame):
         return cube
     
     
-    @qtCore.pyqtSlot(object)
+    @qtCore.Slot(object)
     def showRangeBounds(self, rangeBounds):
         '''
         Display axes showing the range boundaries
@@ -140,5 +140,5 @@ if __name__ == "__main__":
  
     window = mainClass()
  
-    sys.exit(app.exec_())
+    sys.exit(app.exec())
 

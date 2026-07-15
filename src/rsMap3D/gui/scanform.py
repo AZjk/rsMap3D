@@ -5,9 +5,9 @@
 import logging
 logger = logging.getLogger(__name__)
 
-import PyQt5.QtGui as qtGui
-import PyQt5.QtCore as qtCore
-import PyQt5.QtWidgets as qtWidgets
+import PySide6.QtGui as qtGui
+import PySide6.QtCore as qtCore
+import PySide6.QtWidgets as qtWidgets
 
 from rsMap3D.gui.rsmap3dsignals import DONE_LOADING_SIGNAL, RENDER_BOUNDS_SIGNAL,\
     CLEAR_RENDER_WINDOW_SIGNAL, SHOW_RANGE_BOUNDS_SIGNAL
@@ -24,10 +24,10 @@ class ScanForm(qtWidgets.QDialog):
     scan.
     '''
     #define signals needed for this class
-    doneLoading = qtCore.pyqtSignal(name=DONE_LOADING_SIGNAL)
-    clearRenderWindow = qtCore.pyqtSignal(name=CLEAR_RENDER_WINDOW_SIGNAL)
-    renderBoundsSignal = qtCore.pyqtSignal(object, name=RENDER_BOUNDS_SIGNAL)
-    showRangeBounds = qtCore.pyqtSignal(object, name=SHOW_RANGE_BOUNDS_SIGNAL)
+    doneLoading = qtCore.Signal(name=DONE_LOADING_SIGNAL)
+    clearRenderWindow = qtCore.Signal(name=CLEAR_RENDER_WINDOW_SIGNAL)
+    renderBoundsSignal = qtCore.Signal(object, name=RENDER_BOUNDS_SIGNAL)
+    showRangeBounds = qtCore.Signal(object, name=SHOW_RANGE_BOUNDS_SIGNAL)
     
     def __init__(self, parent=None):
         '''
@@ -135,7 +135,7 @@ class ScanForm(qtWidgets.QDialog):
         item.setFlags(item.flags() & (~qtCore.Qt.ItemIsEditable))
         self.detail.setItem(row, column, item)
     
-    @qtCore.pyqtSlot(int)
+    @qtCore.Slot(int)
     def availableScanTypesChanged(self, state):
         scanTypes = self.availableScanTypes.children()
         for scanType in scanTypes:
@@ -146,7 +146,7 @@ class ScanForm(qtWidgets.QDialog):
             self.showAngles(scan)
             self.showQs(scan)
     
-    @qtCore.pyqtSlot(qtWidgets.QTableWidgetItem)
+    @qtCore.Slot(qtWidgets.QTableWidgetItem)
     def checkItemChanged(self, item):
         '''
         Change whether a row is selected or not and register if the associated
@@ -161,7 +161,7 @@ class ScanForm(qtWidgets.QDialog):
             self.dataSource.imageToBeUsed[scanNo][row] = False
         self.showQs(scanNo)
 
-    @qtCore.pyqtSlot()
+    @qtCore.Slot()
     def deselectAllAction(self):
         '''
         Change setting for all images in the selected scan so that none of the
@@ -241,7 +241,7 @@ class ScanForm(qtWidgets.QDialog):
                                maxy[i], minz[i], maxz[i]))
         self.showRangeBounds[object].emit( self.dataSource.getRangeBounds())
                                 
-    @qtCore.pyqtSlot(qtWidgets.QListWidgetItem)
+    @qtCore.Slot(qtWidgets.QListWidgetItem)
     def _scanSelected(self, item):
         '''
         When a scan is selected from the list, change the table to display 
@@ -255,7 +255,7 @@ class ScanForm(qtWidgets.QDialog):
         self.selectAll.setEnabled(True)
         self.deselectAll.setEnabled(True)
                 
-    @qtCore.pyqtSlot()
+    @qtCore.Slot()
     def selectAllAction(self):
         '''
         Mark all images in the currently selected scan for use in analysis
