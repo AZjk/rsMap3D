@@ -5,6 +5,12 @@
  Extracted from Scripts/mapSpecAngleScan_v4.2.py so it can be driven from
  rsMap3D's CLI (`rsMap3D map-angle-scan config.json`) instead of being run
  as a standalone, hand-edited script.
+
+ Fix note: the original assigned `dReader = detReader(detectorConfigName)`
+ *after* the `if roi is None:` block that calls `dReader.getDetectorById(...)`,
+ so any config with roi_setting=null raised NameError before ever reaching
+ the mapper. This extraction moves the dReader assignment above that block
+ so the auto-ROI-from-detector-config path actually works.
 '''
 import datetime
 import logging
