@@ -1,3 +1,4 @@
 # .gitignore for rsMap3D
 *.pyc
 .DS_Store
+docs/build/
