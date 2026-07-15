@@ -41,6 +41,44 @@ Additionally, apply these substitutions to every occurrence found in a file's bo
 
 Do not touch anything else — no reformatting, no reordering imports, no renaming variables. Confirmed clean (do not add handling for these — they don't occur anywhere in scope): `QDesktopWidget`, `QMatrix`, `QStringList`, `AA_*` high-DPI attributes, `QApplication.desktop()`, `.ui` Designer files, `sip`, `QVariant`. Unscoped Qt enum access (`qtCore.Qt.Checked`, `qtCore.Qt.LeftButton`, etc.) needs no change — confirmed working identically in PySide6 6.11.1 (unlike PyQt6, PySide6 does not require fully-scoped enum access).
 
+**Discovered during Task 5 (added here after the fact — this rule was missing from the original closed set and reaches back into already-approved files):** PyQt5's `[type]`-indexed signal-overload syntax (`someSignal[str]`, `someSignal[int]`) is used throughout the codebase, both on custom `Signal(str, name=...)`/`Signal(int, name=...)`-declared signals and on built-in Qt widget signals. Empirically verified against PySide6 6.11.1:
+- Custom single-overload signals (e.g. `processError[str]`, `setFileName[str]`, `updateProgress[int]`, `updateParInfo[int]`) — `[type]` indexing **works unchanged**, no fix needed.
+- `QCheckBox.stateChanged[int]`, `QSpinBox.valueChanged[int]`, `QComboBox.currentIndexChanged[int]` — **work unchanged**, no fix needed.
+- **`QComboBox.currentIndexChanged[str]` fails** with `IndexError: Signature "currentIndexChanged(QString)" not found for signal: "currentIndexChanged". Available candidates: "currentIndexChanged(int)"` — Qt6 removed the `(str)` overload of this signal entirely. The fix is to use the dedicated `currentTextChanged` signal instead (Qt's own replacement for this exact use case; behaviorally identical for the non-editable `QComboBox`es this codebase uses, since a non-editable combo box's displayed text can only change via an index change).
+
+The replacement pattern for every occurrence is the same: change `.currentIndexChanged[str]` to `.currentTextChanged` on that line, keeping whatever `.connect(...)`/`.disconnect(...)`/`.emit(...)` call follows it unchanged. Complete list of the 8 occurrences across the codebase, and which task owns fixing each:
+- `src/rsMap3D/gui/input/usescommonoutputtype.py:45` — **Layer 1, already committed in Task 3** — fixed via a follow-up correction (see "Task 3 correction" below), not by editing Task 3's original commit.
+- `src/rsMap3D/gui/output/processvtioutputform.py:157` — **Layer 1, already committed in Task 3** — same follow-up correction.
+- `src/rsMap3D/gui/input/s1highenergydiffractionform.py:236` — **Layer 3, Task 5's own file set** — fix as part of completing Task 5 correctly.
+- `src/rsMap3D/gui/input/s34hdfescanfileform.py:121` — **Layer 3, Task 5's own file set** — fix as part of completing Task 5 correctly.
+- `src/rsMap3D/gui/input/fileinputcontroller.py:99,107` (2 occurrences) — **Layer 4, Task 6** — add to that task's Migration Rules application.
+- `src/rsMap3D/gui/output/processscanscontroller.py:77,87` (2 occurrences) — **Layer 4, Task 6** — add to that task's Migration Rules application.
+
+#### Task 3 correction (retroactive fix for already-approved files)
+
+Task 3 (Layer 1) is already committed and reviewed, but 2 of its files have the `currentIndexChanged[str]` bug discovered above. Fix as a new, separate commit (do not amend Task 3's original commit — that commit should keep reflecting what was actually reviewed then):
+
+- [ ] In `src/rsMap3D/gui/input/usescommonoutputtype.py:45`, replace:
+  ```python
+          self.outTypeChooser.currentIndexChanged[str].connect(self._outputTypeChanged)
+  ```
+  with:
+  ```python
+          self.outTypeChooser.currentTextChanged.connect(self._outputTypeChanged)
+  ```
+- [ ] In `src/rsMap3D/gui/output/processvtioutputform.py:157-158` (a multi-line statement), replace:
+  ```python
+          self.outputTypeSelect.currentIndexChanged[str]. \
+              connect(self._selectedTypeChanged)
+  ```
+  with:
+  ```python
+          self.outputTypeSelect.currentTextChanged. \
+              connect(self._selectedTypeChanged)
+  ```
+- [ ] Verify both files still import cleanly, re-run `QT_QPA_PLATFORM=offscreen pytest tests/gui/output/test_abstractgridoutputview.py -v` (Layer 1's test) and confirm it still passes.
+- [ ] Commit: `git commit -m "Fix currentIndexChanged[str] -> currentTextChanged in Layer 1 files (usescommonoutputtype.py, processvtioutputform.py): Qt6 removed the (str) overload"`
+
 ---
 
 ### Task 1: Add PySide6 dependency; delete dead Qt4-era code
@@ -378,6 +416,50 @@ git commit -m "Migrate Layer 3 to PySide6: s33/s12/s28specscanfileform (incl. QR
 Additionally, in `src/rsMap3D/gui/output/processscanscontroller.py`, delete this line entirely (a dead, unused import of a PyQt5-internal module with no PySide6 equivalent — confirmed unused since the file's real `QDialog` base comes from the `qtWidgets` alias, a different name):
 ```python
 from PyQt5.uic.Compiler.qtproxies import QtWidgets
+```
+
+Additionally, apply the `currentIndexChanged[str]` → `currentTextChanged` fix (see the Global Constraints note on this — Qt6 removed the `(str)` overload of `QComboBox.currentIndexChanged`) to these 4 occurrences:
+
+In `src/rsMap3D/gui/input/fileinputcontroller.py`, replace:
+```python
+        self.formSelection.currentIndexChanged[str].\
+            connect(self._selectedTypeChanged)
+```
+with:
+```python
+        self.formSelection.currentTextChanged.\
+            connect(self._selectedTypeChanged)
+```
+and replace:
+```python
+        self.formSelection.currentIndexChanged[str].\
+            disconnect(self._selectedTypeChanged)
+```
+with:
+```python
+        self.formSelection.currentTextChanged.\
+            disconnect(self._selectedTypeChanged)
+```
+
+In `src/rsMap3D/gui/output/processscanscontroller.py`, replace:
+```python
+        self.outputFormSelection.currentIndexChanged[str].connect(
+            self._selectedTypeChanged)
+```
+with:
+```python
+        self.outputFormSelection.currentTextChanged.connect(
+            self._selectedTypeChanged)
+```
+and replace:
+```python
+        self.outputFormSelection.currentIndexChanged[str].disconnect(
+            self._selectedTypeChanged)
+```
+with:
+```python
+        self.outputFormSelection.currentTextChanged.disconnect(
+            self._selectedTypeChanged)
 ```
 
 - [ ] **Step 2: Verify imports**
