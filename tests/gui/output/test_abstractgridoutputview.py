@@ -14,7 +14,7 @@ from rsMap3D.gui.output.abstractgridoutputform import AbstractGridOutputForm \
 from rsMap3D.gui.output.abstractgridoutputform import INITIAL_DIM as INITIAL_DIM
 from rsMap3D.config.rsmap3dconfigparser import RSMap3DConfigParser
 
-app = qtWidgets.QApplication(sys.argv)
+app = qtWidgets.QApplication.instance() or qtWidgets.QApplication(sys.argv)
 
 ZERO_INT = 0
 

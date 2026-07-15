@@ -11,7 +11,7 @@ import PySide6.QtTest as qtTest
 
 from rsMap3D.gui.output.abstractoutputview import AbstractOutputView as AOutView
 
-app = qtWidgets.QApplication(sys.argv)
+app = qtWidgets.QApplication.instance() or qtWidgets.QApplication(sys.argv)
 
 class TestAbstractOutputView(unittest.TestCase):
     def setUp(self):

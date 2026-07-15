@@ -11,7 +11,7 @@ import PySide6.QtTest as qtTest
 from rsMap3D.gui.input.s33specscanfileform import S33SpecScanFileForm
 from rsMap3D.config.rsmap3dconfigparser import RSMap3DConfigParser
 
-app = qtWidgets.QApplication(sys.argv)
+app = qtWidgets.QApplication.instance() or qtWidgets.QApplication(sys.argv)
 
 
 class TestS33SpecScanFileForm(unittest.TestCase):
