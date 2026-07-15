@@ -225,8 +225,11 @@ class MainDialog(qtWidgets.QMainWindow):
         
 def ctrlCHandler(signal, frame):
     qtWidgets.QApplication.closeAllWindows()
-    
-if __name__ == "__main__":
+
+def main():
+    '''
+    Launch the rsMap3D GUI. Entry point for `rsMap3D` / `rsMap3D gui`.
+    '''
     #This line allows CTRL_C to work with PyQt.
     logger.debug(METHOD_ENTER_STR)
     signal.signal(signal.SIGINT, ctrlCHandler)
@@ -238,4 +241,7 @@ if __name__ == "__main__":
     timer.start(1000)
     timer.timeout.connect(lambda: None)
     app.exec_()
+
+if __name__ == "__main__":
+    main()
 

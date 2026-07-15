@@ -2,6 +2,7 @@ LICENSE
 README.md
 pyproject.toml
 src/rsMap3D/__init__.py
+src/rsMap3D/cli.py
 src/rsMap3D/constants.py
 src/rsMap3D/rsmEdit.py
 src/rsMap3D.egg-info/PKG-INFO
@@ -99,3 +100,8 @@ src/rsMap3D/transforms/polemaptransform3d.py
 src/rsMap3D/transforms/unitytransform3d.py
 src/rsMap3D/utils/__init__.py
 src/rsMap3D/utils/srange.py
+src/rsMap3D/workflows/__init__.py
+src/rsMap3D/workflows/angle_scan.py
+src/rsMap3D/workflows/parametric_scan.py
+src/rsMap3D/workflows/powder_scan.py
+tests/test_cli.py
