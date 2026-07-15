@@ -5,9 +5,9 @@ Copyright (c) 2014, UChicago Argonne, LLC
 USE_XPCS = False
 import logging
 logger = logging.getLogger(__name__)
-import PyQt5.QtGui as qtGui
-import PyQt5.QtCore as qtCore
-import PyQt5.QtWidgets as qtWidgets
+import PySide6.QtGui as qtGui
+import PySide6.QtCore as qtCore
+import PySide6.QtWidgets as qtWidgets
 from rsMap3D.gui.rsmap3dsignals import BLOCK_TABS_FOR_LOAD_SIGNAL, \
     FILE_ERROR_SIGNAL, LOAD_DATASOURCE_TO_SCAN_FORM_SIGNAL, INPUT_FORM_CHANGED
 from rsMap3D.datasource.Sector33SpecDataSource import LoadCanceledException
@@ -37,13 +37,13 @@ class FileInputController(qtWidgets.QDialog):
     classdocs
     '''
     #define qtSignals to be used here
-    setScanLoadOK = qtCore.pyqtSignal()
-    setScanLoadCancelOK = qtCore.pyqtSignal()
-    fileErrorSignal = qtCore.pyqtSignal(str, name=FILE_ERROR_SIGNAL)
-    blockTabsForLoad = qtCore.pyqtSignal(name=BLOCK_TABS_FOR_LOAD_SIGNAL)
-    loadDataSourceToScanForm = qtCore.pyqtSignal(
+    setScanLoadOK = qtCore.Signal()
+    setScanLoadCancelOK = qtCore.Signal()
+    fileErrorSignal = qtCore.Signal(str, name=FILE_ERROR_SIGNAL)
+    blockTabsForLoad = qtCore.Signal(name=BLOCK_TABS_FOR_LOAD_SIGNAL)
+    loadDataSourceToScanForm = qtCore.Signal(
                 name = LOAD_DATASOURCE_TO_SCAN_FORM_SIGNAL)
-    inputFormChanged = qtCore.pyqtSignal(name = INPUT_FORM_CHANGED)
+    inputFormChanged = qtCore.Signal(name = INPUT_FORM_CHANGED)
     
     def __init__(self, parent=None, appConfig=None):
         '''
@@ -96,7 +96,7 @@ class FileInputController(qtWidgets.QDialog):
         self.fileFormWidget.dataSource.signalCancelLoadSource()
         
     def _connectSignals(self):
-        self.formSelection.currentIndexChanged[str].\
+        self.formSelection.currentTextChanged.\
             connect(self._selectedTypeChanged)
         self.fileFormWidget.loadFile.connect(self._spawnLoadThread)
         self.fileFormWidget.cancelLoadFile.connect(self._cancelLoadThread)
@@ -104,7 +104,7 @@ class FileInputController(qtWidgets.QDialog):
         self.setScanLoadCancelOK.connect(self.fileFormWidget.setCancelOK)
         
     def _disconnectSignals(self):
-        self.formSelection.currentIndexChanged[str].\
+        self.formSelection.currentTextChanged.\
             disconnect(self._selectedTypeChanged)
         self.fileFormWidget.loadFile.disconnect(self._spawnLoadThread)
         self.fileFormWidget.cancelLoadFile.disconnect(self._cancelLoadThread)
@@ -166,7 +166,7 @@ class FileInputController(qtWidgets.QDialog):
         self.loadDataSourceToScanForm.emit()
         self.setScanLoadOK.emit()
         
-    @qtCore.pyqtSlot(str)
+    @qtCore.Slot(str)
     def _selectedTypeChanged(self, typeStr):
         self._disconnectSignals()
         self.formLayout.removeWidget(self.fileFormWidget)

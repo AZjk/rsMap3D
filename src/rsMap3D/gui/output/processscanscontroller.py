@@ -3,12 +3,12 @@
  See LICENSE file.
 '''
 
-import PyQt5.QtGui as qtGui
-import PyQt5.QtCore as qtCore
-import PyQt5.QtWidgets as qtWidgets
+import PySide6.QtGui as qtGui
+import PySide6.QtCore as qtCore
+import PySide6.QtWidgets as qtWidgets
 
-from  PyQt5.QtCore import pyqtSignal as Signal
-from  PyQt5.QtCore import pyqtSlot as Slot
+from PySide6.QtCore import Signal
+from PySide6.QtCore import Slot
 
 from rsMap3D.gui.rsmap3dsignals import BLOCK_TABS_FOR_PROCESS_SIGNAL, \
     SET_PROCESS_CANCEL_OK_SIGNAL,\
@@ -18,7 +18,6 @@ from rsMap3D.mappers.abstractmapper import ProcessCanceledException
 import traceback
 from rsMap3D.exception.rsmap3dexception import RSMap3DException
 import logging
-from PyQt5.uic.Compiler.qtproxies import QtWidgets
 logger = logging.getLogger(__name__)
 
 class ProcessScansController(qtWidgets.QDialog):
@@ -74,7 +73,7 @@ class ProcessScansController(qtWidgets.QDialog):
         return outputFormSelection, self.outputForms
         
     def _connectSignals(self):
-        self.outputFormSelection.currentIndexChanged[str].connect(
+        self.outputFormSelection.currentTextChanged.connect(
             self._selectedTypeChanged)
         self.outputFormWidget.process.connect(self._spawnProcessThread)
         self.outputFormWidget.cancel.connect(self._stopMapper)
@@ -84,7 +83,7 @@ class ProcessScansController(qtWidgets.QDialog):
         
         
     def _disconnectSignals(self):
-        self.outputFormSelection.currentIndexChanged[str].disconnect(
+        self.outputFormSelection.currentTextChanged.disconnect(
             self._selectedTypeChanged)
         self.outputFormWidget.process.disconnect(self._spawnProcessThread)
         self.outputFormWidget.cancel.disconnect(self._stopMapper)
