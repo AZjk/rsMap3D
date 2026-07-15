@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Overview
 
-rsMap3D is a PyQt5 desktop application (from the Advanced Photon Source, Argonne National Lab) that
+rsMap3D is a PySide6 desktop application (from the Advanced Photon Source, Argonne National Lab) that
 transforms images collected during an x-ray scattering experiment into a 3D reciprocal space map,
 using `xrayutilities` for the underlying Q-space calculations. It supports several beamline-specific
 data formats (spec files + area-detector images, HDF5/NeXus, XPCS/IMM), and can output VTI volumes,
@@ -17,7 +17,7 @@ Packaging is `pyproject.toml` (setuptools backend) — there is no `setup.py`.
 ## Running the application
 
 Use the `d2607_rsmap3d` conda environment (`/home/beams/MQICHU/miniforge3/envs/d2607_rsmap3d`, Python
-3.13), which has PyQt5/VTK/xrayutilities etc. already installed:
+3.13), which has PySide6/VTK/xrayutilities etc. already installed:
 
 ```bash
 conda activate d2607_rsmap3d
@@ -27,7 +27,7 @@ rsMap3D                 # launches the GUI (equivalent to `rsMap3D gui`)
 
 or without activating: `/home/beams/MQICHU/miniforge3/envs/d2607_rsmap3d/bin/rsMap3D`.
 
-This launches the PyQt5 GUI (`MainDialog` in `src/rsMap3D/rsmEdit.py`), a tabbed workflow: File → Data
+This launches the PySide6 GUI (`MainDialog` in `src/rsMap3D/rsmEdit.py`), a tabbed workflow: File → Data
 Range → Scans → Process Data.
 
 ### CLI subcommands
@@ -47,14 +47,16 @@ sample configs for `map-angle-scan`. `rsMap3D --help` / `rsMap3D <subcommand> --
 
 ## Dependencies
 
-Declared in `pyproject.toml`: `PyQt5`, `vtk`, `numpy`, `xrayutilities`, `h5py`, `hdf5plugin`,
+Declared in `pyproject.toml`: `PySide6`, `vtk`, `numpy`, `xrayutilities`, `h5py`, `hdf5plugin`,
 `matplotlib`, `spec2nexus`, `pillow`. Optional extras: `pip install -e ".[xpcs]"` adds `pyepics`
 (needed by the XPCS/NSLS-II-specific data sources and the angle-scan workflow's realtime-scan-polling
 feature); `pip install -e ".[dev]"` adds `pytest`. `pyimm` (used by the IMM/XPCS datasource) and
 `paraview` (used by `scripts/paraview/*.py`) are not on PyPI and remain manual installs — check imports
 in the relevant `datasource`/`scripts` module before assuming either is available.
 
-Python 3.9+ / PyQt5 / VTK 8.2+ is required (the codebase was ported from Python 2 / PyQt4 around v1.2.0).
+Python 3.9+ / PySide6 / VTK 8.2+ is required (the codebase was ported from Python 2 / PyQt4 to
+Python 3 / PyQt5 around v1.2.0, then from PyQt5 to PySide6 — PySide6 is the Qt Company's own,
+LGPL-licensed binding, vs. PyQt5's GPL/commercial dual license from Riverbank Computing).
 
 ## Tests
 
