@@ -55,7 +55,7 @@ class InstForXrayutilitiesReader():
             axisNumberStr = circle.attrib[AXIS_NUMBER]
         except KeyError:
             raise InstConfigException("Axis number is empty in \n" + \
-                                      ET.tostring(circle) + \
+                                      ET.tostring(circle).decode() + \
                                       "\nIn the instrument config file")
         return int(axisNumberStr)
         
@@ -379,7 +379,7 @@ class InstForXrayutilitiesReader():
             except KeyError:
                 raise InstConfigException("missing axis number or " + \
                                           "axis direction in\n" + \
-                                          ET.tostring(circle) + \
+                                          ET.tostring(circle).decode() + \
                                           "\nIn the instrument config file")
             data.append((int(axisNum), \
                             directionAxis))
@@ -402,7 +402,7 @@ class InstForXrayutilitiesReader():
             except KeyError:
                 raise InstConfigException("missing axis number or " + \
                                           "motorName in\n" + \
-                                          ET.tostring(circle) + \
+                                          ET.tostring(circle).decode() + \
                                           "\nIn the instrument config file")
             data.append((int(axisNumber), \
                             motorName))
@@ -421,7 +421,7 @@ class InstForXrayutilitiesReader():
         
         if len(axes) != 3:
             raise InstConfigException("Axes not defined properly in \n" + \
-                                      ET.tostring(direction) + \
+                                      ET.tostring(direction).decode() + \
                                       "\nin instrument config file")
                   
         refAxis = {}
@@ -430,7 +430,7 @@ class InstForXrayutilitiesReader():
                 refAxis[int(axis.attrib[AXIS_NUMBER])] = int(axis.text)
             except ValueError:
                 raise InstConfigException("Values and axis numbers in " + \
-                                           ET.tostring(direction) + \
+                                           ET.tostring(direction).decode() + \
                                            " in instrument configuration file")
                                             
         return [refAxis[1], refAxis[2], refAxis[3]]

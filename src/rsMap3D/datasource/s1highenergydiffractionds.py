@@ -172,7 +172,7 @@ class S1HighEnergyDiffractionDS(AbstractXrayutilitiesDataSource):
             zmin = [np.min(qzTrans[i]) for i in idx] 
             zmax = [np.max(qzTrans[i]) for i in idx] 
         else:
-            nPasses = imageSize*4*numImages/ maxImageMem + 1
+            nPasses = imageSize*4*numImages // maxImageMem + 1
             xmin = []
             xmax = []
             ymin = []
@@ -185,8 +185,8 @@ class S1HighEnergyDiffractionDS(AbstractXrayutilitiesDataSource):
                 if self.progressUpdater is not None:
                     self.progressUpdater(self.progress, self.progressMax)
                 self.progress += self.progressInc        
-                firstImageInPass = thisPass*numImages/nPasses
-                lastImageInPass = (thisPass+1)*numImages/nPasses
+                firstImageInPass = int(thisPass*numImages/nPasses)
+                lastImageInPass = int((thisPass+1)*numImages/nPasses)
                 logger.debug("firstImageInPass %d, lastImageInPass %d" %
                              (firstImageInPass, lastImageInPass))
                 imageList = range(firstImageInPass, lastImageInPass)
@@ -584,7 +584,7 @@ class S1ParameterFile():
                     pass
                 else:
                     raise RSMap3DException("S1ParameterFile: " +
-                                           str(parFile) +
+                                           fileName +
                                            " does not contain the expected first " +
                                            "column " + str(param))
             #logger.debug(reader.keys())
