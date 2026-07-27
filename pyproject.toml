@@ -27,7 +27,7 @@ dependencies = [
 
 [project.optional-dependencies]
 xpcs = ["pyepics"]
-dev = ["pytest"]
+dev = ["pytest", "ruff"]
 
 [project.scripts]
 rsMap3D = "rsMap3D.cli:main"
@@ -40,3 +40,14 @@ rsMap3D = ["resources/*.xml"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+
+[tool.ruff]
+line-length = 120
+target-version = "py39"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "UP", "B", "C90"]
+ignore = ["E501"]
+
+[tool.ruff.lint.isort]
+known-first-party = ["rsMap3D"]
