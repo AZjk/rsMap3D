@@ -1,7 +1,8 @@
-'''
- Copyright (c) 2026, UChicago Argonne, LLC
- See LICENSE file.
-'''
+"""
+Copyright (c) 2026, UChicago Argonne, LLC
+See LICENSE file.
+"""
+
 import importlib.resources
 import os
 
@@ -13,8 +14,7 @@ from rsMap3D.workflows import powder_scan
 class _FakeDataSource:
     instances = []
 
-    def __init__(self, projectDir, projectName, projectExtension,
-                 instConfigFile, detConfigFile, **kwargs):
+    def __init__(self, projectDir, projectName, projectExtension, instConfigFile, detConfigFile, **kwargs):
         self.kwargs = kwargs
         self.imageToBeUsed = {1: [True, True, True]}
         _FakeDataSource.instances.append(self)
@@ -78,7 +78,9 @@ def config(tmp_path):
         "binning": [1, 1],
         "roi_setting": [1, 487, 1, 195],
         "data_coordinate": "tth",
-        "x_min": 15, "x_max": 75, "x_step": 0.05,
+        "x_min": 15,
+        "x_max": 75,
+        "x_step": 0.05,
         "do_plot": False,
         "plot_y": "Linear",
         "write_file": True,
@@ -105,8 +107,7 @@ def test_run_builds_datasource_and_powdermapper_and_creates_output_dir(monkeypat
     assert mapper.kwargs["dataCoord"] == "tth"
     assert mapper.kwargs["xCoordMin"] == 15
     assert mapper.kwargs["xCoordMax"] == 75
-    expected_output = os.path.join(
-        str(tmp_path), "analysis_runtime", "CB_140303A_1", "CB_140303A_1_S001.xye")
+    expected_output = os.path.join(str(tmp_path), "analysis_runtime", "CB_140303A_1", "CB_140303A_1_S001.xye")
     assert mapper.outputFileName == expected_output
     # the fix under test: the *actual* output directory must exist, not a
     # same-named directory relative to the current working directory.

@@ -44,6 +44,14 @@ testpaths = ["tests"]
 [tool.ruff]
 line-length = 120
 target-version = "py39"
+exclude = [
+    "scripts/paraview",
+    "scripts/powderscan_newRSM3D.py",
+    "scripts/powderscan_win.py",
+    "scripts/mapSpecAngleScan.py",
+    "scripts/mapSpecAngleScan_v2.py",
+    "src/rsMap3D/mappers/output/vti_to_imstack.py",
+]
 
 [tool.ruff.lint]
 select = ["E", "F", "W", "I", "UP", "B", "C90"]
@@ -51,3 +59,11 @@ ignore = ["E501"]
 
 [tool.ruff.lint.isort]
 known-first-party = ["rsMap3D"]
+
+[tool.ruff.lint.per-file-ignores]
+"scripts/paraview/*" = ["F403", "F405"]
+"scripts/powderscan_newRSM3D.py" = ["E", "F", "W", "I", "UP", "B", "C90"]
+"scripts/powderscan_win.py" = ["E", "F", "W", "I", "UP", "B", "C90"]
+"scripts/mapSpecAngleScan.py" = ["E", "F", "W", "I", "UP", "B", "C90"]
+"scripts/mapSpecAngleScan_v2.py" = ["E", "F", "W", "I", "UP", "B", "C90"]
+"src/rsMap3D/mappers/output/vti_to_imstack.py" = ["E", "F", "W", "I", "UP", "B", "C90"]

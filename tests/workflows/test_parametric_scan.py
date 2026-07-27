@@ -1,7 +1,8 @@
-'''
- Copyright (c) 2026, UChicago Argonne, LLC
- See LICENSE file.
-'''
+"""
+Copyright (c) 2026, UChicago Argonne, LLC
+See LICENSE file.
+"""
+
 import importlib.resources
 import os
 
@@ -13,8 +14,7 @@ from rsMap3D.workflows import parametric_scan
 class _FakeDataSource:
     instances = []
 
-    def __init__(self, projectDir, projectName, projectExtension,
-                 instConfigFile, detConfigFile, **kwargs):
+    def __init__(self, projectDir, projectName, projectExtension, instConfigFile, detConfigFile, **kwargs):
         self.kwargs = kwargs
         self.imageToBeUsed = {1: [True, True, True]}
         _FakeDataSource.instances.append(self)
@@ -75,7 +75,9 @@ def config():
         "detector_name": "Pilatus",
         "binning": [1, 1],
         "roi_setting": [1, 487, 1, 195],
-        "nx": 300, "ny": 300, "nz": 10,
+        "nx": 300,
+        "ny": 300,
+        "nz": 10,
     }
 
 

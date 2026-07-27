@@ -1,7 +1,8 @@
-'''
- Copyright (c) 2026, UChicago Argonne, LLC
- See LICENSE file.
-'''
+"""
+Copyright (c) 2026, UChicago Argonne, LLC
+See LICENSE file.
+"""
+
 import importlib.resources
 import os
 import shutil
@@ -10,15 +11,13 @@ import pytest
 
 from rsMap3D.workflows import angle_scan
 
-FIXTURES_DIR = os.path.join(
-    os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "fixtures")
+FIXTURES_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "fixtures")
 
 
 class _FakeDataSource:
     instances = []
 
-    def __init__(self, projectDir, projectName, projectExtension,
-                 instConfigFile, detConfigFile, **kwargs):
+    def __init__(self, projectDir, projectName, projectExtension, instConfigFile, detConfigFile, **kwargs):
         self.projectDir = projectDir
         self.projectName = projectName
         self.projectExtension = projectExtension
@@ -86,7 +85,9 @@ def config(tmp_path):
         "detector_name": "Pilatus",
         "binning": [1, 1],
         "roi_setting": [1, 487, 1, 195],
-        "nx": 10, "ny": 11, "nz": 12,
+        "nx": 10,
+        "ny": 11,
+        "nz": 12,
         "grid_range": None,
         "use_HKL": False,
         "real_time": False,

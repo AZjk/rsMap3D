@@ -1,42 +1,34 @@
-'''
- Copyright (c) 2012, UChicago Argonne, LLC
- See LICENSE file.
-'''
-import unittest
-import xml.etree.ElementTree as ET
-from rsMap3D.datasource.InstForXrayutilitiesReader import \
-    InstForXrayutilitiesReader
-from rsMap3D.exception.rsmap3dexception import InstConfigException
-import os
-import importlib.resources
+"""
+Copyright (c) 2012, UChicago Argonne, LLC
+See LICENSE file.
+"""
 
+import importlib.resources
+import os
+import unittest
+
+from rsMap3D.datasource.InstForXrayutilitiesReader import InstForXrayutilitiesReader
+from rsMap3D.exception.rsmap3dexception import InstConfigException
 
 THIS_DIR = os.path.dirname(os.path.abspath(__file__))
 
-PROBLEM_FILES_DIR = os.path.join(THIS_DIR,
-                                 '../fixtures/problemFilesForTesting/')
+PROBLEM_FILES_DIR = os.path.join(THIS_DIR, "../fixtures/problemFilesForTesting/")
+
 
 class Test(unittest.TestCase):
-
-
     def setUp(self):
-        resources_dir = importlib.resources.files('rsMap3D') / 'resources'
-        self.config = InstForXrayutilitiesReader(
-                 str(resources_dir / '33BM-instForXrayutilities.xml'))
-        self.config2 = InstForXrayutilitiesReader(
-                 str(resources_dir / '33BM-instForXrayutilities-noMonitor.xml'))
-        self.config3 = InstForXrayutilitiesReader(
-                 str(resources_dir / '33BM-instForXrayutilities-noCircles.xml'))
-        self.config4 = InstForXrayutilitiesReader(
-                 str(resources_dir / '33BM-instForXrayutilities-noScalingFactor.xml'))
-        self.config5 = InstForXrayutilitiesReader(
-                 str(resources_dir / '13BMC_Instrument.xml'))
+        resources_dir = importlib.resources.files("rsMap3D") / "resources"
+        self.config = InstForXrayutilitiesReader(str(resources_dir / "33BM-instForXrayutilities.xml"))
+        self.config2 = InstForXrayutilitiesReader(str(resources_dir / "33BM-instForXrayutilities-noMonitor.xml"))
+        self.config3 = InstForXrayutilitiesReader(str(resources_dir / "33BM-instForXrayutilities-noCircles.xml"))
+        self.config4 = InstForXrayutilitiesReader(str(resources_dir / "33BM-instForXrayutilities-noScalingFactor.xml"))
+        self.config5 = InstForXrayutilitiesReader(str(resources_dir / "13BMC_Instrument.xml"))
         self.config6 = InstForXrayutilitiesReader(
-                 str(resources_dir / '7IDC-instForXrayutilitiesFixWrongValuesChiPhi.xml'))
+            str(resources_dir / "7IDC-instForXrayutilitiesFixWrongValuesChiPhi.xml")
+        )
 
     def tearDown(self):
         pass
-
 
     def testGetAxisNumber(self):
         sampleCircles = self.config.getSampleCircles()
@@ -44,17 +36,14 @@ class Test(unittest.TestCase):
         for circle in sampleCircles:
             axisList.append(self.config.getCircleAxisNumber(circle))
         axisList.sort()
-        refList = [1,2,3]
-        self.assertEqual(axisList, refList, "GetAxisList" + \
-                         str(axisList) + " vs " + str(refList))
-        
+        refList = [1, 2, 3]
+        self.assertEqual(axisList, refList, "GetAxisList" + str(axisList) + " vs " + str(refList))
+
     def testGetAxisNumberNoAxis(self):
-        config = InstForXrayutilitiesReader( PROBLEM_FILES_DIR + \
-                      'instNoSampleAxisNumber.xml')
+        config = InstForXrayutilitiesReader(PROBLEM_FILES_DIR + "instNoSampleAxisNumber.xml")
         sampleCircles = config.getSampleCircles()
         for circle in sampleCircles:
-            self.assertRaises(InstConfigException, \
-                              config.getCircleAxisNumber, circle)
+            self.assertRaises(InstConfigException, config.getCircleAxisNumber, circle)
 
     def testGetMonitorName(self):
         monitorName = self.config.getMonitorName()
@@ -73,24 +62,18 @@ class Test(unittest.TestCase):
         self.assertEqual(monitorName, 1, "getMonitorScaleFactorNoMonitor")
 
     def testGetMonitorNameEmptyName(self):
-        config = InstForXrayutilitiesReader( PROBLEM_FILES_DIR + \
-                      'instEmptyMonitorAndFilter.xml')
+        config = InstForXrayutilitiesReader(PROBLEM_FILES_DIR + "instEmptyMonitorAndFilter.xml")
         monitorName = config.getMonitorName()
-        self.assertEqual(monitorName, None, 
-                          "testGetMonitorNameEmptyName: expecting: " +\
-                          str(None) + \
-                          ", got: " + \
-                          str(monitorName) )
+        self.assertEqual(
+            monitorName, None, "testGetMonitorNameEmptyName: expecting: " + str(None) + ", got: " + str(monitorName)
+        )
 
     def testGetMonitorNameWhiteSpace(self):
-        config = InstForXrayutilitiesReader( PROBLEM_FILES_DIR + \
-                      'instWhiteSpaceMonitorAndFilter.xml')
+        config = InstForXrayutilitiesReader(PROBLEM_FILES_DIR + "instWhiteSpaceMonitorAndFilter.xml")
         monitorName = config.getMonitorName()
-        self.assertEqual(monitorName, None, 
-                          "testGetMonitorNameWhiteSpace: expecting: " +\
-                          str(None) + \
-                          ", got: " + \
-                          str(monitorName) )
+        self.assertEqual(
+            monitorName, None, "testGetMonitorNameWhiteSpace: expecting: " + str(None) + ", got: " + str(monitorName)
+        )
 
     def testGetMonitorScaleFactorNoScaleFactor(self):
         monitorName = self.config4.getMonitorScaleFactor()
@@ -105,24 +88,18 @@ class Test(unittest.TestCase):
         self.assertEqual(filterName, None, "getFilterNameNoMonitor")
 
     def testGetFilterNameEmptyName(self):
-        config = InstForXrayutilitiesReader( PROBLEM_FILES_DIR + \
-                      'instEmptyMonitorAndFilter.xml')
+        config = InstForXrayutilitiesReader(PROBLEM_FILES_DIR + "instEmptyMonitorAndFilter.xml")
         filterName = config.getFilterName()
-        self.assertEqual(filterName, None, 
-                          "getFilterNameEmptyName: expecting: " +\
-                          str(None) + \
-                          ", got: " + \
-                          str(filterName) )
+        self.assertEqual(
+            filterName, None, "getFilterNameEmptyName: expecting: " + str(None) + ", got: " + str(filterName)
+        )
 
     def testGetFilterNameWhiteSpace(self):
-        config = InstForXrayutilitiesReader( PROBLEM_FILES_DIR + \
-                      'instWhiteSpaceMonitorAndFilter.xml')
+        config = InstForXrayutilitiesReader(PROBLEM_FILES_DIR + "instWhiteSpaceMonitorAndFilter.xml")
         filterName = config.getFilterName()
-        self.assertEqual(filterName, None, 
-                          "getFilterNameWhiteSpace: expecting: " +\
-                          str(None) + \
-                          ", got: " + \
-                          str(filterName) )
+        self.assertEqual(
+            filterName, None, "getFilterNameWhiteSpace: expecting: " + str(None) + ", got: " + str(filterName)
+        )
 
     def testGetFilterScaleFactor(self):
         scaleFactor = self.config.getFilterScaleFactor()
@@ -139,195 +116,152 @@ class Test(unittest.TestCase):
     def testGetDetectorCircles(self):
         circles = self.config.getDetectorCircles()
         self.assertEqual(len(circles), 1, "getDetectorCircles")
-        
+
     def testGetDetectorCirclesNoCircle(self):
         self.assertRaises(InstConfigException, self.config3.getDetectorCircles)
-        
+
     def testGetInplaneReferenceDirectionNoDirection(self):
-        config = InstForXrayutilitiesReader( PROBLEM_FILES_DIR + \
-                      'instNoReferenceDirections.xml')
-        self.assertRaises(InstConfigException, \
-                          config.getInplaneReferenceDirection)
-        
+        config = InstForXrayutilitiesReader(PROBLEM_FILES_DIR + "instNoReferenceDirections.xml")
+        self.assertRaises(InstConfigException, config.getInplaneReferenceDirection)
+
     def testGetInplaneReferenceDirectionValueNotANumber(self):
-        config = InstForXrayutilitiesReader( PROBLEM_FILES_DIR + \
-                      'instAxisValuesNotANumber.xml')
-        self.assertRaises(InstConfigException, 
-                          config.getInplaneReferenceDirection)
-        
+        config = InstForXrayutilitiesReader(PROBLEM_FILES_DIR + "instAxisValuesNotANumber.xml")
+        self.assertRaises(InstConfigException, config.getInplaneReferenceDirection)
+
     def testGetPrimaryBeamDirectionNoDirection(self):
-        config = InstForXrayutilitiesReader( PROBLEM_FILES_DIR + \
-                      'instNoReferenceDirections.xml')
-        self.assertRaises(InstConfigException, \
-                          config.getPrimaryBeamDirection)
-        
+        config = InstForXrayutilitiesReader(PROBLEM_FILES_DIR + "instNoReferenceDirections.xml")
+        self.assertRaises(InstConfigException, config.getPrimaryBeamDirection)
+
     def testGetPrimaryBeamDirectionNoAxes(self):
-        config = InstForXrayutilitiesReader( PROBLEM_FILES_DIR + \
-                      'instNoAxesOnReferenceAxes.xml')
-        self.assertRaises(InstConfigException, \
-                          config.getPrimaryBeamDirection)
-        
+        config = InstForXrayutilitiesReader(PROBLEM_FILES_DIR + "instNoAxesOnReferenceAxes.xml")
+        self.assertRaises(InstConfigException, config.getPrimaryBeamDirection)
+
     def testGetPrimaryBeamDirectionValueNotANumber(self):
-        config = InstForXrayutilitiesReader( PROBLEM_FILES_DIR + \
-                      'instAxisValuesNotANumber.xml')
-        self.assertRaises(InstConfigException, 
-                          config.getPrimaryBeamDirection)
-        
+        config = InstForXrayutilitiesReader(PROBLEM_FILES_DIR + "instAxisValuesNotANumber.xml")
+        self.assertRaises(InstConfigException, config.getPrimaryBeamDirection)
+
     def testGetProjectionDirection(self):
         direction = self.config.getProjectionDirection()
         refDirection = [0, 0, 1]
-        self.assertEqual(direction, refDirection, \
-                         "getProjectionDirection " + str(direction) + " vs "\
-                         + str(refDirection) )
-        
+        self.assertEqual(
+            direction, refDirection, "getProjectionDirection " + str(direction) + " vs " + str(refDirection)
+        )
+
     def testGetProjectionDirection2(self):
         direction = self.config5.getProjectionDirection()
         refDirection = [0, 0, -1]
-        self.assertEqual(direction, refDirection, \
-                         "getProjectionDirection " + str(direction) + " vs "\
-                         + str(refDirection) )
+        self.assertEqual(
+            direction, refDirection, "getProjectionDirection " + str(direction) + " vs " + str(refDirection)
+        )
 
     def testGetProjectionDirectionNoDirection(self):
-        self.assertRaises(InstConfigException, 
-                          self.config3.getProjectionDirection)
-        
+        self.assertRaises(InstConfigException, self.config3.getProjectionDirection)
+
     def testGetProjectionDirectionValueNotANumber(self):
-        config = InstForXrayutilitiesReader( PROBLEM_FILES_DIR + \
-                      'instAxisValuesNotANumber.xml')
-        self.assertRaises(InstConfigException, 
-                          config.getProjectionDirection)
-        
+        config = InstForXrayutilitiesReader(PROBLEM_FILES_DIR + "instAxisValuesNotANumber.xml")
+        self.assertRaises(InstConfigException, config.getProjectionDirection)
+
     def testGetSampleCircleDirections(self):
         directions = self.config.getSampleCircleDirections()
         refDirections = ["z-", "y+", "z-"]
-        self.assertEqual(directions, refDirections, 
-                         "getSampleCircleDirections " + \
-                         str(directions) + " vs " +
-                         str(refDirections))
+        self.assertEqual(
+            directions, refDirections, "getSampleCircleDirections " + str(directions) + " vs " + str(refDirections)
+        )
 
     def testGetSampleCircleDirectionsNoAxisNumber(self):
-        config = InstForXrayutilitiesReader( PROBLEM_FILES_DIR + \
-                      'instNoSampleAxisNumber.xml')
-        self.assertRaises(InstConfigException, \
-                         config.getSampleCircleDirections)
-        
+        config = InstForXrayutilitiesReader(PROBLEM_FILES_DIR + "instNoSampleAxisNumber.xml")
+        self.assertRaises(InstConfigException, config.getSampleCircleDirections)
+
     def testGetSampleCircleNames(self):
         names = self.config.getSampleCircleNames()
         refNames = ["theta", "chi", "phi"]
-        self.assertEqual(names, refNames, 
-                         "getSampleCircleNames " + \
-                         str(names) + " vs " +
-                         str(refNames))
+        self.assertEqual(names, refNames, "getSampleCircleNames " + str(names) + " vs " + str(refNames))
 
     def testGetSampleCircleNamesNoAxisNumber(self):
-        config = InstForXrayutilitiesReader( PROBLEM_FILES_DIR + \
-                      'instNoSampleAxisNumber.xml')
-        self.assertRaises(InstConfigException, \
-                         config.getSampleCircleNames)
-        
+        config = InstForXrayutilitiesReader(PROBLEM_FILES_DIR + "instNoSampleAxisNumber.xml")
+        self.assertRaises(InstConfigException, config.getSampleCircleNames)
+
     def testGetSampleCircleNamesNoMotorName(self):
-        config = InstForXrayutilitiesReader( PROBLEM_FILES_DIR + \
-                      'instNoSampleAxisMotorName.xml')
-        self.assertRaises(InstConfigException, \
-                         config.getSampleCircleNames)
-        
+        config = InstForXrayutilitiesReader(PROBLEM_FILES_DIR + "instNoSampleAxisMotorName.xml")
+        self.assertRaises(InstConfigException, config.getSampleCircleNames)
+
     def testGetSampleCircleDirectionsNoAxisDirection(self):
-        config = InstForXrayutilitiesReader( PROBLEM_FILES_DIR + \
-                      'instNoSampleAxisDirection.xml')
-        self.assertRaises(InstConfigException, \
-                         config.getSampleCircleDirections)
-        
+        config = InstForXrayutilitiesReader(PROBLEM_FILES_DIR + "instNoSampleAxisDirection.xml")
+        self.assertRaises(InstConfigException, config.getSampleCircleDirections)
+
     def testGetSampleCircles(self):
         circles = self.config.getSampleCircles()
         self.assertEqual(len(circles), 3, "getSampleCircles")
-        
+
     def testGetSampleCirclesNoCircle(self):
         self.assertRaises(InstConfigException, self.config3.getSampleCircles)
-        
+
     def testGetSampleAngleMappingFunctionName(self):
         name = self.config5.getSampleAngleMappingFunctionName()
-        self.assertEqual(name, \
-                          "_calc_eulerian_from_kappa", \
-                          "getSampleAngleMappingFunction: " + name)
-        
+        self.assertEqual(name, "_calc_eulerian_from_kappa", "getSampleAngleMappingFunction: " + name)
+
     def testGetSampleAngleMappingFunctionNameNoMap(self):
         name = self.config4.getSampleAngleMappingFunctionName()
-        self.assertEqual(name, \
-                          "", \
-                          "getSampleAngleMappingFunction: " + name)
+        self.assertEqual(name, "", "getSampleAngleMappingFunction: " + name)
 
     def testGetSampleAngleMappingCalcOnScannedRef(self):
         calc = self.config5.getSampleAngleMappingCalcOnScannedRef()
-        self.assertEqual(calc, \
-                          True, \
-                          "getSampleAngleMappingCalcOnScannedRef: " + str(calc))
-        
+        self.assertEqual(calc, True, "getSampleAngleMappingCalcOnScannedRef: " + str(calc))
+
     def testGetSampleAngleMappingFunctionCalcOnScannedRefNoMap(self):
-        self.assertRaises(InstConfigException, 
-                          self.config4.getSampleAngleMappingCalcOnScannedRef)
-        
+        self.assertRaises(InstConfigException, self.config4.getSampleAngleMappingCalcOnScannedRef)
+
     def testGetSampleAngleMappingPrimaryAngles(self):
         angles = self.config5.getSampleAngleMappingPrimaryAngles()
-        self.assertEqual(angles, \
-                          [2,3,4], \
-                          "getSampleAngleMappingPrimaryAngles: " + str(angles))
+        self.assertEqual(angles, [2, 3, 4], "getSampleAngleMappingPrimaryAngles: " + str(angles))
 
     def testGetSampleAngleMappingParameter(self):
-        param = self.config5.getSampleAngleMappingParameter('kappa')
+        param = self.config5.getSampleAngleMappingParameter("kappa")
         kappa = 49.9945
-        self.assertEqual(param, str(kappa), \
-                         "testGetSampleAngleMappingParameter Expecting: " + \
-                         str(kappa) + \
-                         " got back: " + \
-                         str(param))
-        param = self.config5.getSampleAngleMappingParameter('kappaInverted')
+        self.assertEqual(
+            param,
+            str(kappa),
+            "testGetSampleAngleMappingParameter Expecting: " + str(kappa) + " got back: " + str(param),
+        )
+        param = self.config5.getSampleAngleMappingParameter("kappaInverted")
         kappaInverted = True
-        self.assertEqual(param, str(kappaInverted), \
-                         "testGetSampleAngleMappingParameter Expecting: " + \
-                         str(kappaInverted) + \
-                         " got back: " + \
-                         str(param))
-        
+        self.assertEqual(
+            param,
+            str(kappaInverted),
+            "testGetSampleAngleMappingParameter Expecting: " + str(kappaInverted) + " got back: " + str(param),
+        )
+
     def testGetSampleAngleMappingFunctionPrimaryAnglesNoMap(self):
-        self.assertRaises(InstConfigException, 
-                          self.config4.getSampleAngleMappingPrimaryAngles)
-        
+        self.assertRaises(InstConfigException, self.config4.getSampleAngleMappingPrimaryAngles)
+
     def testGetSampleAngleMappingRefereceAngles(self):
         angles = self.config5.getSampleAngleMappingReferenceAngles()
-        self.assertEqual(angles, \
-                          ['keta', "kap", "kphi"], \
-                          "getSampleAngleMappingReferenceAngles: " + str(angles))
+        self.assertEqual(angles, ["keta", "kap", "kphi"], "getSampleAngleMappingReferenceAngles: " + str(angles))
 
     def testGetSampleAngleMappingFunctionReferenceAnglesNoMap(self):
-        self.assertRaises(InstConfigException, 
-                          self.config4.getSampleAngleMappingReferenceAngles)
+        self.assertRaises(InstConfigException, self.config4.getSampleAngleMappingReferenceAngles)
 
     def testGetSampleSurfaceNormalDirectionNoDirection(self):
-        config = InstForXrayutilitiesReader( PROBLEM_FILES_DIR + \
-                      'instNoReferenceDirections.xml')
-        self.assertRaises(InstConfigException, \
-                          config.getSampleSurfaceNormalDirection)
-        
+        config = InstForXrayutilitiesReader(PROBLEM_FILES_DIR + "instNoReferenceDirections.xml")
+        self.assertRaises(InstConfigException, config.getSampleSurfaceNormalDirection)
+
     def testGetSampleSurfaceNormalDirectionValueNotANumber(self):
-        config = InstForXrayutilitiesReader( PROBLEM_FILES_DIR + \
-                      'instAxisValuesNotANumber.xml')
-        self.assertRaises(InstConfigException, 
-                          config.getSampleSurfaceNormalDirection)
- 
+        config = InstForXrayutilitiesReader(PROBLEM_FILES_DIR + "instAxisValuesNotANumber.xml")
+        self.assertRaises(InstConfigException, config.getSampleSurfaceNormalDirection)
+
+
 #     def testGetSampleAngleMappingPrimaryAngleAttrib(self):
 #         config = self.config6
 #         replaceVal = config.getSampleAngleMappingPrimaryAngleAttrib('2', "replaceValue")
-#         self.assertEqual(replaceVal,  
-#                          '45.0', 
+#         self.assertEqual(replaceVal,
+#                          '45.0',
 #                          config.getSampleAngleMappingPrimaryAngleAttrib.__name__)
 #         replaceVal = config.getSampleAngleMappingPrimaryAngleAttrib('3', "replaceValue")
-#         self.assertEqual(replaceVal,  
-#                          '32.0', 
+#         self.assertEqual(replaceVal,
+#                          '32.0',
 #                          config.getSampleAngleMappingPrimaryAngleAttrib.__name__)
 #         self.assertRaises(AttributeError,config.getSampleAngleMappingPrimaryAngleAttrib,('1', "replaceValue"))
-    
+
 if __name__ == "__main__":
-    #import sys;sys.argv = ['', 'Test.testGetMonitorName']
+    # import sys;sys.argv = ['', 'Test.testGetMonitorName']
     unittest.main()
-    
-    

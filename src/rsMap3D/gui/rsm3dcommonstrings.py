@@ -1,7 +1,8 @@
-'''
- Copyright (c) 2014, UChicago Argonne, LLC
- See LICENSE file.
-'''
+"""
+Copyright (c) 2014, UChicago Argonne, LLC
+See LICENSE file.
+"""
+
 POSITIVE_INFINITY = "Infinity"
 NEGATIVE_INFINITY = "-Infinity"
 WARNING_STR = "Warning"
@@ -13,8 +14,8 @@ EMPTY_STR = ""
 SPACE_STR = " "
 COMMA_STR = ","
 QLINEEDIT_COLOR_STYLE = "QLineEdit {color : %s;}"
-RED = 'red'
-BLACK = 'black'
+RED = "red"
+BLACK = "black"
 BAD_PIXEL_FILE_FILTER = "Bad Pixel *.txt ;; All Files *.*"
 SELECT_BAD_PIXEL_TITLE = "Select Bad Pixel File"
 TIFF_FILE_FILTER = "TIFF Files (*.tiff *.tif) ;; All Files *.*"

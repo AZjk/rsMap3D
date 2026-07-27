@@ -1,49 +1,58 @@
-# coding=utf-8
-'''
- Copyright (c) 2017, UChicago Argonne, LLC
- See LICENSE file.
-'''
-import os
+"""
+Copyright (c) 2017, UChicago Argonne, LLC
+See LICENSE file.
+"""
+
 import logging
+import os
+
 from rsMap3D.config.rsmap3dlogging import METHOD_ENTER_STR, METHOD_EXIT_STR
+
 logger = logging.getLogger(__name__)
 
-import PySide6.QtGui as qtGui
 import PySide6.QtCore as qtCore
+import PySide6.QtGui as qtGui
 import PySide6.QtWidgets as qtWidgets
 
+from rsMap3D.datasource.DetectorGeometryForXrayutilitiesReader import DetectorGeometryForXrayutilitiesReader
+from rsMap3D.exception.rsmap3dexception import DetectorConfigException, RSMap3DException
 from rsMap3D.gui.input.abstractfileview import AbstractFileView
-from rsMap3D.datasource.DetectorGeometryForXrayutilitiesReader \
-    import DetectorGeometryForXrayutilitiesReader
-from rsMap3D.exception.rsmap3dexception import RSMap3DException,\
-    DetectorConfigException
-from rsMap3D.gui.rsm3dcommonstrings import COMMA_STR, EMPTY_STR,\
-    QLINEEDIT_COLOR_STYLE, WARNING_STR, BROWSE_STR, \
-    DETECTOR_CONFIG_FILE_FILTER,\
-    SELECT_DETECTOR_CONFIG_TITLE, BLACK, RED
+from rsMap3D.gui.rsm3dcommonstrings import (
+    BLACK,
+    BROWSE_STR,
+    COMMA_STR,
+    DETECTOR_CONFIG_FILE_FILTER,
+    EMPTY_STR,
+    QLINEEDIT_COLOR_STYLE,
+    RED,
+    SELECT_DETECTOR_CONFIG_TITLE,
+    WARNING_STR,
+)
+
 
 class UsesXMLDetectorConfig(AbstractFileView):
-    '''
-    class to provide functionality provided by the XML detector configuration 
+    """
+    class to provide functionality provided by the XML detector configuration
     file.  Designed for use along with other view classes.  Use multiple inheritance
     such as "class myView(specXmlDrivenFileForm, usesXMLDetectorConfig):
-    then add the gui blocks in _createDataBox to add fike selection stuff. 
+    then add the gui blocks in _createDataBox to add fike selection stuff.
     This provides gui that allows file selection, then detector selection since
     multiple detectors can be defined in a file and then ROI selection.
-    '''
-    DET_ROI_REGEXP_1 =  r"^(\d*,*)+$"
-    DET_ROI_REGEXP_2 =  r"^(\d)+,(\d)+,(\d)+,(\d)+$"
+    """
 
-    #UPDATE_PROGRESS_SIGNAL = "updateProgress"
+    DET_ROI_REGEXP_1 = r"^(\d*,*)+$"
+    DET_ROI_REGEXP_2 = r"^(\d)+,(\d)+,(\d)+,(\d)+$"
+
+    # UPDATE_PROGRESS_SIGNAL = "updateProgress"
     # Regular expressions for string validation
-    PIX_AVG_REGEXP_1 =  r"^(\d*,*)+$"
-    PIX_AVG_REGEXP_2 =  r"^((\d)+,*){2}$"
+    PIX_AVG_REGEXP_1 = r"^(\d*,*)+$"
+    PIX_AVG_REGEXP_2 = r"^((\d)+,*){2}$"
 
     def __init__(self, parent=None, **kwargs):
-        '''
+        """
         constructor
-        '''
-        super(UsesXMLDetectorConfig, self).__init__(parent, **kwargs)
+        """
+        super().__init__(parent, **kwargs)
         logger.debug(METHOD_ENTER_STR)
         self.roixmin = 1
         self.roixmax = 680
@@ -53,35 +62,34 @@ class UsesXMLDetectorConfig(AbstractFileView):
         self.detConfig = None
         self.detFileOk = False
         logger.debug(METHOD_EXIT_STR)
-        
-#    @qtCore.Slot()
+
+    #    @qtCore.Slot()
     def _browseForDetFile(self):
-        '''
+        """
         Launch file selection dialog for Detector file.
-        '''
+        """
         logger.debug(METHOD_ENTER_STR)
         if self.detConfigTxt.text() == EMPTY_STR:
-            fileName = qtWidgets.QFileDialog.getOpenFileName(None, \
-                                            SELECT_DETECTOR_CONFIG_TITLE, \
-                                            filter=DETECTOR_CONFIG_FILE_FILTER)[0]
+            fileName = qtWidgets.QFileDialog.getOpenFileName(
+                None, SELECT_DETECTOR_CONFIG_TITLE, filter=DETECTOR_CONFIG_FILE_FILTER
+            )[0]
         else:
             fileDirectory = os.path.dirname(str(self.detConfigTxt.text()))
-            fileName = qtWidgets.QFileDialog.getOpenFileName(None, \
-                                         SELECT_DETECTOR_CONFIG_TITLE, \
-                                         filter=DETECTOR_CONFIG_FILE_FILTER, \
-                                         directory = fileDirectory)[0]
+            fileName = qtWidgets.QFileDialog.getOpenFileName(
+                None, SELECT_DETECTOR_CONFIG_TITLE, filter=DETECTOR_CONFIG_FILE_FILTER, directory=fileDirectory
+            )[0]
         if fileName != EMPTY_STR:
             self.detConfigTxt.setText(fileName)
             self.detConfigTxt.editingFinished.emit()
         logger.debug(METHOD_EXIT_STR)
 
     def _createDetConfig(self, layout, row):
-        '''
+        """
         Add in gui elements for selecting a detector config file and then
         selecting from the list of detectors provided.
-        '''
+        """
         logger.debug(METHOD_ENTER_STR)
-        label = qtWidgets.QLabel("Detector Config File:");
+        label = qtWidgets.QLabel("Detector Config File:")
         self.detConfigTxt = qtWidgets.QLineEdit()
         self.detConfigFileButton = qtWidgets.QPushButton(BROWSE_STR)
         layout.addWidget(label, row, 0)
@@ -93,81 +101,73 @@ class UsesXMLDetectorConfig(AbstractFileView):
         self.detSelect = qtWidgets.QComboBox()
         layout.addWidget(label, row, 0)
         layout.addWidget(self.detSelect, row, 1)
-        
+
         # use new style to emit edit finished signal
         self.detConfigFileButton.clicked.connect(self._browseForDetFile)
         self.detConfigTxt.editingFinished.connect(self._detConfigChanged)
         self.detSelect.currentTextChanged.connect(self._currentDetectorChanged)
         logger.debug(METHOD_EXIT_STR)
-        
 
     def _createDetectorROIInput(self, layout, row, silent=False):
-        '''
+        """
         Adds gui elements for entering the ROI
-        '''
+        """
         logger.debug(METHOD_ENTER_STR)
-        label = qtWidgets.QLabel("Detector ROI:");
+        label = qtWidgets.QLabel("Detector ROI:")
         self.detROITxt = qtWidgets.QLineEdit()
         self.updateROITxt()
         rxROI = qtCore.QRegularExpression(self.DET_ROI_REGEXP_1)
-        self.detROITxt.setValidator(qtGui.QRegularExpressionValidator(rxROI,self.detROITxt))
-        
-        if (silent==False):
+        self.detROITxt.setValidator(qtGui.QRegularExpressionValidator(rxROI, self.detROITxt))
+
+        if not silent:
             layout.addWidget(label, row, 0)
             layout.addWidget(self.detROITxt, row, 1)
-        
+
         # use new style to emit edit finished signal
         self.detROITxt.textChanged.connect(self._detROITxtEntered)
         logger.debug(METHOD_EXIT_STR)
-    
+
     def _createNumberOfPixelsToAverage(self, layout, row, silent=False):
         logger.debug(METHOD_ENTER_STR)
-        label = qtWidgets.QLabel("Number of Pixels To Average:");
+        label = qtWidgets.QLabel("Number of Pixels To Average:")
         self.pixAvgTxt = qtWidgets.QLineEdit("1,1")
         rxAvg = qtCore.QRegularExpression(self.PIX_AVG_REGEXP_1)
-        self.pixAvgTxt.setValidator(qtGui.QRegularExpressionValidator(rxAvg,self.pixAvgTxt))
-        if (silent == False):
+        self.pixAvgTxt.setValidator(qtGui.QRegularExpressionValidator(rxAvg, self.pixAvgTxt))
+        if not silent:
             layout.addWidget(label, row, 0)
             layout.addWidget(self.pixAvgTxt, row, 1)
         logger.debug(METHOD_EXIT_STR)
 
-#    @qtCore.Slot(str)
+    #    @qtCore.Slot(str)
     def _currentDetectorChanged(self, currentDetector):
         logger.debug(METHOD_ENTER_STR % str(currentDetector))
         self.currentDetector = str(currentDetector)
         # if the detector list is empty, let's not update ROI etc.
         if currentDetector != "":
-           self.updateROIandNumAvg()
-        logger.debug(METHOD_EXIT_STR  % self.currentDetector)
-        
-#    @qtCore.Slot()
+            self.updateROIandNumAvg()
+        logger.debug(METHOD_EXIT_STR % self.currentDetector)
+
+    #    @qtCore.Slot()
     def _detConfigChanged(self):
-        '''
-        '''
+        """ """
         logger.debug(METHOD_ENTER_STR)
-        if self.detFileExists() or \
-           self.detConfigTxt.text() == "":
+        if self.detFileExists() or self.detConfigTxt.text() == "":
             if self.detConfigTxt.text() != "":
                 try:
                     self.detFileOk = self.isDetFileOk()
-                    #self.updateDetectorList()
-                    #self.updateROIandNumAvg()
+                    # self.updateDetectorList()
+                    # self.updateROIandNumAvg()
                 except DetectorConfigException as ex:
-                    logger.error( ex)
+                    logger.error(ex)
                     message = qtWidgets.QMessageBox()
-                    message.warning(self, \
-                                     WARNING_STR,\
-                                     "Trouble getting ROI or Num average " + \
-                                     "from the detector config file")
+                    message.warning(
+                        self, WARNING_STR, "Trouble getting ROI or Num average " + "from the detector config file"
+                    )
             self.checkOkToLoad()
         else:
             message = qtWidgets.QMessageBox()
-            message.warning(self, \
-                             WARNING_STR,\
-                             "The filename entered for the detector " + \
-                             "configuration is invalid")
+            message.warning(self, WARNING_STR, "The filename entered for the detector " + "configuration is invalid")
             logger.debug(METHOD_EXIT_STR)
-
 
     def detFileExists(self):
         logger.debug(METHOD_ENTER_STR)
@@ -181,24 +181,24 @@ class UsesXMLDetectorConfig(AbstractFileView):
         if detFileExists:
             try:
                 self.updateDetectorList()
-                #self.updateROIandNumAvg()
+                # self.updateROIandNumAvg()
             except DetectorConfigException:
                 # not a well formed deteector config
                 logger.debug("Exiting by Exception")
                 return False
         logger.debug(METHOD_EXIT_STR + str(detFileExists))
         return detFileExists
-        
-#    @qtCore.Slot(str)
+
+    #    @qtCore.Slot(str)
     def _detROITxtChanged(self, text):
-        '''
-        Check to make sure the text for detector roi is valid and indicate 
-        by a color change 
-        '''
+        """
+        Check to make sure the text for detector roi is valid and indicate
+        by a color change
+        """
         logger.debug(METHOD_ENTER_STR)
         if self.detROIValid(text):
             self.detROITxt.setStyleSheet(QLINEEDIT_COLOR_STYLE % BLACK)
-        else: 
+        else:
             self.detROITxt.setStyleSheet(QLINEEDIT_COLOR_STYLE % RED)
         logger.debug(METHOD_ENTER_STR)
 
@@ -209,17 +209,16 @@ class UsesXMLDetectorConfig(AbstractFileView):
         logger.debug(METHOD_EXIT_STR)
 
     def detROIValid(self, text):
-        '''
+        """
         Check to make sure the text for is a vaid detector roi
-        '''
+        """
         logger.debug(METHOD_ENTER_STR)
         rxROI = qtCore.QRegularExpression(self.DET_ROI_REGEXP_2)
         validator = qtGui.QRegularExpressionValidator(rxROI, None)
         pos = 0
         if validator.validate(text, pos)[0] == qtGui.QValidator.Acceptable:
             roiVals = self.getDetectorROI(rois=str(text))
-            if (roiVals[0] <= roiVals[1]) and \
-               (roiVals[2] <= roiVals[3]):
+            if (roiVals[0] <= roiVals[1]) and (roiVals[2] <= roiVals[3]):
                 logger.debug(METHOD_EXIT_STR + str(True))
                 return True
             else:
@@ -228,69 +227,65 @@ class UsesXMLDetectorConfig(AbstractFileView):
         else:
             logger.debug(METHOD_EXIT_STR + str(False))
             return False
-        
+
     def getDetConfigName(self):
-        '''
+        """
         Return the selected Detector Configuration file
-        '''
+        """
         logger.debug(METHOD_ENTER_STR)
         nameText = self.detConfigTxt.text()
         logger.debug(METHOD_EXIT_STR % nameText)
         return nameText
 
     def getDetectorROI(self, rois=EMPTY_STR):
-        '''
+        """
         :param rois: a string list with the roi values
         :return: The detector ROI as a list
         :raises RSMap3DException: if the string is not a 4 element list
-        '''
+        """
         logger.debug(METHOD_ENTER_STR)
         if rois == EMPTY_STR:
             roiStrings = str(self.detROITxt.text()).split(COMMA_STR)
         else:
             roiStrings = rois.split(COMMA_STR)
-            
+
         roi = []
         if len(roiStrings) != 4:
-            logger.debug("Exiting via exception" +
-                          "Detector ROI needs 4 values. " + \
-                                   str(len(roiStrings)) + \
-                                   " were given.")
-            raise RSMap3DException("Detector ROI needs 4 values. " + \
-                                   str(len(roiStrings)) + \
-                                   " were given.")
+            logger.debug(
+                "Exiting via exception" + "Detector ROI needs 4 values. " + str(len(roiStrings)) + " were given."
+            )
+            raise RSMap3DException("Detector ROI needs 4 values. " + str(len(roiStrings)) + " were given.")
         for value in roiStrings:
             roi.append(int(value))
         logger.debug(METHOD_EXIT_STR)
         return roi
-    
+
     def updateDetectorList(self):
         logger.debug(METHOD_ENTER_STR)
         oldNumDet = self.detSelect.count()
         for index in reversed(range(oldNumDet)):
             self.detSelect.removeItem(index)
         detConfigFileName = str(self.detConfigTxt.text())
-        logger.debug("detectorConfigFile - " + detConfigFileName)    
-        self.detConfig = \
-            DetectorGeometryForXrayutilitiesReader(detConfigFileName)
+        logger.debug("detectorConfigFile - " + detConfigFileName)
+        self.detConfig = DetectorGeometryForXrayutilitiesReader(detConfigFileName)
         detectors = self.detConfig.getDetectors()
         for detector in detectors:
             detID = self.detConfig.getDetectorID(detector)
             self.detSelect.addItem(detID)
             logger.debug("updateDetectorList - " + str(detID))
         self.detSelect.itemText(0)
-        
+
         self.detSelect.currentTextChanged.emit(self.detSelect.itemText(0))
         logger.debug(METHOD_EXIT_STR)
-        
+
     def updateROIandNumAvg(self):
-        '''
-        Set default values into the ROI and number of pixel to average text 
+        """
+        Set default values into the ROI and number of pixel to average text
         boxes
-        '''
+        """
         logger.debug(METHOD_ENTER_STR)
-#         detConfig = \
-#             DetectorGeometryForXrayutilitiesReader(self.detConfigTxt.text())
+        #         detConfig = \
+        #             DetectorGeometryForXrayutilitiesReader(self.detConfigTxt.text())
         logger.debug("self.currentDetector " + str(self.currentDetector))
         detector = self.detConfig.getDetectorById(str(self.currentDetector))
         detSize = self.detConfig.getNpixels(detector)
@@ -302,17 +297,18 @@ class UsesXMLDetectorConfig(AbstractFileView):
         logger.debug(METHOD_EXIT_STR)
 
     def updateROITxt(self):
-        '''
+        """
         Update the ROI string with the current value of the ROI
-        '''
+        """
         logger.debug(METHOD_ENTER_STR)
-        roiStr = str(self.roixmin) +\
-                COMMA_STR +\
-                str(self.roixmax) +\
-                COMMA_STR +\
-                str(self.roiymin) +\
-                COMMA_STR +\
-                str(self.roiymax)
+        roiStr = (
+            str(self.roixmin)
+            + COMMA_STR
+            + str(self.roixmax)
+            + COMMA_STR
+            + str(self.roiymin)
+            + COMMA_STR
+            + str(self.roiymax)
+        )
         self.detROITxt.setText(roiStr)
         logger.debug(METHOD_EXIT_STR)
-

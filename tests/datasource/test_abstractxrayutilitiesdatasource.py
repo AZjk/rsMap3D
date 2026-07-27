@@ -1,24 +1,21 @@
-'''
- Copyright (c) 2012, UChicago Argonne, LLC
- See LICENSE file.
-'''
+"""
+Copyright (c) 2012, UChicago Argonne, LLC
+See LICENSE file.
+"""
+
 import unittest
-from rsMap3D.datasource.AbstractXrayUtilitiesDataSource import \
-    AbstractXrayutilitiesDataSource
+
 from rsMap3D.config.rsmap3dconfigparser import RSMap3DConfigParser
+from rsMap3D.datasource.AbstractXrayUtilitiesDataSource import AbstractXrayutilitiesDataSource
+
 
 class Test(unittest.TestCase):
-
-
     def setUp(self):
         appConfig = RSMap3DConfigParser()
-        self.dataSource = TestDataSource(appConfig=appConfig) 
-                                                 
-
+        self.dataSource = TestDataSource(appConfig=appConfig)
 
     def tearDown(self):
         pass
-
 
     def testGetMonitorName(self):
         monitorName = self.dataSource.getMonitorName()
@@ -38,22 +35,22 @@ class Test(unittest.TestCase):
 
 
 class TestDataSource(AbstractXrayutilitiesDataSource):
-
     def __init__(self, **kwargs):
-        super(TestDataSource, self).__init__(**kwargs)
-        
+        super().__init__(**kwargs)
+
     def loadSource(self):
         return
-        
+
     def getImage(self):
         return
-    
+
     def getReferenceNames(self):
         return AbstractXrayutilitiesDataSource.getReferenceNames(self)
-    
+
     def getReferenceValues(self):
         return AbstractXrayutilitiesDataSource.getReferenceValues(self)
-    
+
+
 if __name__ == "__main__":
-    #import sys;sys.argv = ['', 'Test.testName']
+    # import sys;sys.argv = ['', 'Test.testName']
     unittest.main()

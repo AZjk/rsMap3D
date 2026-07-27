@@ -1,31 +1,44 @@
-'''
- Copyright (c) 2014, UChicago Argonne, LLC
- See LICENSE file.
-'''
+"""
+Copyright (c) 2014, UChicago Argonne, LLC
+See LICENSE file.
+"""
 
-import PySide6.QtGui as qtGui
 import PySide6.QtCore as qtCore
+import PySide6.QtGui as qtGui
 import PySide6.QtWidgets as qtWidgets
 
+from rsMap3D.gui.rsm3dcommonstrings import (
+    MAX_STR,
+    MIN_STR,
+    NEGATIVE_INFINITY,
+    POSITIVE_INFINITY,
+    WARNING_STR,
+    X_STR,
+    XMAX_INDEX,
+    XMIN_INDEX,
+    Y_STR,
+    YMAX_INDEX,
+    YMIN_INDEX,
+    Z_STR,
+    ZMAX_INDEX,
+    ZMIN_INDEX,
+)
 from rsMap3D.gui.rsmap3dsignals import RANGE_CHANGED_SIGNAL
-from rsMap3D.gui.rsm3dcommonstrings import POSITIVE_INFINITY, NEGATIVE_INFINITY,\
-    WARNING_STR, XMIN_INDEX, XMAX_INDEX, YMIN_INDEX, YMAX_INDEX, ZMIN_INDEX,\
-    ZMAX_INDEX, MIN_STR, MAX_STR, X_STR, Y_STR, Z_STR
+
 
 class DataRange(qtWidgets.QDialog):
-    '''
+    """
     This class displays the overall data range for all selected images in
     the available scans.
-    '''
+    """
 
     rangeChanged = qtCore.Signal(name=RANGE_CHANGED_SIGNAL)
-    
-    def __init__(self, parent=None):                
-        '''
-        '''
-        super(DataRange, self).__init__(parent)
+
+    def __init__(self, parent=None):
+        """ """
+        super().__init__(parent)
         self._initializeRanges()
-        
+
         layout = qtWidgets.QGridLayout()
         xLabel = qtWidgets.QLabel(X_STR)
         xminLabel = qtWidgets.QLabel(MIN_STR)
@@ -58,29 +71,29 @@ class DataRange(qtWidgets.QDialog):
 
         self.resetButton = qtWidgets.QPushButton("Reset")
         self.resetButton.setDisabled(True)
-        
+
         self.applyButton = qtWidgets.QPushButton("Apply")
         self.applyButton.setDisabled(True)
-        
+
         buttonLayout.addWidget(self.resetButton)
         buttonLayout.addWidget(self.applyButton)
-        
-        layout.addWidget(xLabel, 0,0)
-        layout.addWidget(xminLabel, 0,1)
-        layout.addWidget(self.xminText, 0,2)
-        layout.addWidget(xmaxLabel, 0,3)
-        layout.addWidget(self.xmaxText, 0,4)
-        layout.addWidget(yLabel, 1,0)
-        layout.addWidget(yminLabel, 1,1)
-        layout.addWidget(self.yminText, 1,2)
-        layout.addWidget(ymaxLabel, 1,3)
-        layout.addWidget(self.ymaxText, 1,4)
-        layout.addWidget(zLabel, 2,0)
-        layout.addWidget(zminLabel, 2,1)
-        layout.addWidget(self.zminText, 2,2)
-        layout.addWidget(zmaxLabel, 2,3)
-        layout.addWidget(self.zmaxText, 2,4)
-        layout.addLayout(buttonLayout, 3,4)
+
+        layout.addWidget(xLabel, 0, 0)
+        layout.addWidget(xminLabel, 0, 1)
+        layout.addWidget(self.xminText, 0, 2)
+        layout.addWidget(xmaxLabel, 0, 3)
+        layout.addWidget(self.xmaxText, 0, 4)
+        layout.addWidget(yLabel, 1, 0)
+        layout.addWidget(yminLabel, 1, 1)
+        layout.addWidget(self.yminText, 1, 2)
+        layout.addWidget(ymaxLabel, 1, 3)
+        layout.addWidget(self.ymaxText, 1, 4)
+        layout.addWidget(zLabel, 2, 0)
+        layout.addWidget(zminLabel, 2, 1)
+        layout.addWidget(self.zminText, 2, 2)
+        layout.addWidget(zmaxLabel, 2, 3)
+        layout.addWidget(self.zmaxText, 2, 4)
+        layout.addLayout(buttonLayout, 3, 4)
 
         self.resetButton.clicked.connect(self._resetRange)
         self.applyButton.clicked.connect(self._applyRange)
@@ -92,27 +105,29 @@ class DataRange(qtWidgets.QDialog):
         self.zmaxText.editingFinished.connect(self._zValChanged)
         self.rangeChanged.connect(self._checkOkToApply)
         self.setLayout(layout)
-        
+
     @qtCore.Slot()
     def _applyRange(self):
-        '''
-        Apply changes by recording them as current values and signaling that 
+        """
+        Apply changes by recording them as current values and signaling that
         the ranges have changed.
-        '''
-        self.ranges = (float(self.xminText.text()),
-                       float(self.xmaxText.text()),
-                       float(self.yminText.text()),
-                       float(self.ymaxText.text()),
-                       float(self.zminText.text()),
-                       float(self.zmaxText.text()))
+        """
+        self.ranges = (
+            float(self.xminText.text()),
+            float(self.xmaxText.text()),
+            float(self.yminText.text()),
+            float(self.ymaxText.text()),
+            float(self.zminText.text()),
+            float(self.zmaxText.text()),
+        )
         self.rangeChanged.emit()
-        
+
     @qtCore.Slot()
     def _checkOkToApply(self):
-        '''
-        If x, y and z pairs are OK and if the value has changed enable apply. 
+        """
+        If x, y and z pairs are OK and if the value has changed enable apply.
         Otherwise, disable apply.  If values have changed, enable reset.
-        '''
+        """
         if self.xValsOk and self.yValsOk and self.zValsOk and self.valsChanged:
             self.applyButton.setDisabled(False)
         else:
@@ -123,55 +138,57 @@ class DataRange(qtWidgets.QDialog):
             self.resetButton.setDisabled(True)
 
     def _checkValsOk(self):
-        '''
+        """
         Check the min/max value pairs to make sure that the min < max.
-        '''
+        """
         xmin = float(self.xminText.text())
         xmax = float(self.xmaxText.text())
-        if (xmin < xmax):
+        if xmin < xmax:
             self.xValsOk = True
-        else: 
+        else:
             self.xValsOk = False
         ymin = float(self.yminText.text())
         ymax = float(self.ymaxText.text())
-        if (ymin < ymax):
+        if ymin < ymax:
             self.yValsOk = True
-        else: 
+        else:
             self.yValsOk = False
         zmin = float(self.zminText.text())
         zmax = float(self.zmaxText.text())
-        if (zmin < zmax):
+        if zmin < zmax:
             self.zValsOk = True
-        else: 
+        else:
             self.zValsOk = False
-        
+
     def getRanges(self):
-        '''
+        """
         Return the range values
-        '''
+        """
         return self.ranges
-        
+
     def _initializeRanges(self):
-        '''
-        Private class to initialize ranges at +- infinity.  This sets values 
+        """
+        Private class to initialize ranges at +- infinity.  This sets values
         but puts them to bad values on purpose.
-        '''
-        self.ranges = (float(POSITIVE_INFINITY), \
-                       float(NEGATIVE_INFINITY), \
-                        float(POSITIVE_INFINITY), \
-                        float(NEGATIVE_INFINITY), \
-                        float(POSITIVE_INFINITY), \
-                        float(NEGATIVE_INFINITY))
+        """
+        self.ranges = (
+            float(POSITIVE_INFINITY),
+            float(NEGATIVE_INFINITY),
+            float(POSITIVE_INFINITY),
+            float(NEGATIVE_INFINITY),
+            float(POSITIVE_INFINITY),
+            float(NEGATIVE_INFINITY),
+        )
         self.xValsOk = True
         self.yValsOk = True
         self.zValsOk = True
         self.valsChanged = False
-        
+
     @qtCore.Slot()
     def _resetRange(self):
-        '''
+        """
         Reset the ranges to the last set of applied values.
-        '''
+        """
         self.xminText.setText(str(self.ranges[XMIN_INDEX]))
         self.xmaxText.setText(str(self.ranges[XMAX_INDEX]))
         self.yminText.setText(str(self.ranges[YMIN_INDEX]))
@@ -180,9 +197,9 @@ class DataRange(qtWidgets.QDialog):
         self.zmaxText.setText(str(self.ranges[ZMAX_INDEX]))
         self.valsChanged = False
         self._checkOkToApply()
-        
+
     def setRanges(self, xmin, xmax, ymin, ymax, zmin, zmax):
-        '''
+        """
         Allow ranges to be set externally
         :param xmin: minimum value in x direction
         :param xmax: maximum value in x direction
@@ -190,7 +207,7 @@ class DataRange(qtWidgets.QDialog):
         :param ymax: maximum value in y direction
         :param zmin: minimum value in z direction
         :param zmax: maximum value in z direction
-        '''
+        """
         self.ranges = (xmin, xmax, ymin, ymax, zmin, zmax)
         self.xminText.setText(str(xmin))
         self.xmaxText.setText(str(xmax))
@@ -200,50 +217,42 @@ class DataRange(qtWidgets.QDialog):
         self.zmaxText.setText(str(zmax))
         self.valsChanged = False
         self._checkOkToApply()
-        
+
     @qtCore.Slot()
     def _xValChanged(self):
-        '''
+        """
         Trigger that the xmin or xmax value has changed
-        '''
-        #make sure this can be a float also make sure min < max
+        """
+        # make sure this can be a float also make sure min < max
         self._checkValsOk()
         if not self.xValsOk:
             message = qtWidgets.QMessageBox()
-            message.warning(self, \
-                            WARNING_STR, \
-                            "xmin must be less than xmax")
+            message.warning(self, WARNING_STR, "xmin must be less than xmax")
         self.valsChanged = True
         self._checkOkToApply()
-        
 
-    
     @qtCore.Slot()
     def _yValChanged(self):
-        '''
+        """
         Trigger that the ymin or ymax value has changed
-        '''
-        #make sure this can be a float also make sure min < max
+        """
+        # make sure this can be a float also make sure min < max
         self._checkValsOk()
         if not self.yValsOk:
             message = qtWidgets.QMessageBox()
-            message.warning(self, \
-                            WARNING_STR, \
-                            "ymin must be less than ymax")
+            message.warning(self, WARNING_STR, "ymin must be less than ymax")
         self.valsChanged = True
         self._checkOkToApply()
-    
+
     @qtCore.Slot()
     def _zValChanged(self):
-        '''
+        """
         Trigger that the zmin value has changed
-        '''
-        #make sure this can be a float also make sure min < max
+        """
+        # make sure this can be a float also make sure min < max
         self._checkValsOk()
         if not self.zValsOk:
             message = qtWidgets.QMessageBox()
-            message.warning(self, \
-                            WARNING_STR, \
-                            "zmin must be less than zmax")
+            message.warning(self, WARNING_STR, "zmin must be less than zmax")
         self.valsChanged = True
         self._checkOkToApply()

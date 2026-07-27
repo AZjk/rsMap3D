@@ -1,45 +1,47 @@
-'''
- Copyright (c) 2017, UChicago Argonne, LLC
- See LICENSE file.
-'''
-import os
-import logging
+"""
+Copyright (c) 2017, UChicago Argonne, LLC
+See LICENSE file.
+"""
 
-from rsMap3D.transforms.unitytransform3d import UnityTransform3D
-from rsMap3D.transforms.polemaptransform3d import PoleMapTransform3D
-from rsMap3D.datasource.s1highenergydiffractionds import S1ParameterFile,\
-    S1HighEnergyDiffractionDS, INCIDENT_ENERGY
+import logging
+import os
+
+from rsMap3D.config.rsmap3dlogging import METHOD_ENTER_STR, METHOD_EXIT_STR
+from rsMap3D.datasource.s1highenergydiffractionds import INCIDENT_ENERGY, S1HighEnergyDiffractionDS, S1ParameterFile
 from rsMap3D.exception.rsmap3dexception import RSMap3DException
 from rsMap3D.gui.input.usescommonoutputtype import UsesCommonOutputTypes
-from rsMap3D.config.rsmap3dlogging import METHOD_ENTER_STR, METHOD_EXIT_STR
+from rsMap3D.transforms.polemaptransform3d import PoleMapTransform3D
+from rsMap3D.transforms.unitytransform3d import UnityTransform3D
+
 logger = logging.getLogger(__name__)
 
-import PySide6.QtGui as qtGui
 import PySide6.QtCore as qtCore
+import PySide6.QtGui as qtGui
 import PySide6.QtWidgets as qtWidgets
 
 from rsMap3D.gui.input.abstractimageperfileview import AbstractImagePerFileView
-
-from rsMap3D.gui.output.processvtioutputform import ProcessVTIOutputForm
 from rsMap3D.gui.input.usesxmldetectorconfig import UsesXMLDetectorConfig
 from rsMap3D.gui.input.usesxmlinstconfig import UsesXMLInstConfig
+from rsMap3D.gui.output.processvtioutputform import ProcessVTIOutputForm
 from rsMap3D.gui.rsm3dcommonstrings import BROWSE_STR, EMPTY_STR, WARNING_STR
 
-IMAGE_DIR_DIALOG_TITLE = "Select Image Directory"    
+IMAGE_DIR_DIALOG_TITLE = "Select Image Directory"
 UPDATE_PAR_INFO = "updateParInfo"
 RESET_PAR_INFO = "resetParInfo"
 
-class S1HighEnergyDiffractionForm(AbstractImagePerFileView, \
-                                  UsesXMLDetectorConfig, UsesXMLInstConfig,
-                                  UsesCommonOutputTypes):
-    '''
+
+class S1HighEnergyDiffractionForm(
+    AbstractImagePerFileView, UsesXMLDetectorConfig, UsesXMLInstConfig, UsesCommonOutputTypes
+):
+    """
     This class presents information for selecting input files
-    '''
+    """
+
     WAITING_FOR_INPUT = "Waiting for input..."
     FORM_TITLE = "Sector 1 High Energy Diffraction"
     HED_IMAGE_FILE_TITLE = "HED Image File"
     HED_IMAGE_FILE_FILTER = "S1 corrected files *.par"
-    
+
     # Set up signals for this class
     updateParInfo = qtCore.Signal(int, name=UPDATE_PAR_INFO)
     resetParInfo = qtCore.Signal(name=RESET_PAR_INFO)
@@ -47,107 +49,106 @@ class S1HighEnergyDiffractionForm(AbstractImagePerFileView, \
     @staticmethod
     def createInstance(parent=None, appConfig=None):
         return S1HighEnergyDiffractionForm(parent=parent, appConfig=appConfig)
-    
+
     def __init__(self, **kwargs):
-        '''
-         constructor
-         '''
-        super(S1HighEnergyDiffractionForm, self).__init__( **kwargs)
+        """
+        constructor
+        """
+        super().__init__(**kwargs)
         logger.debug(METHOD_ENTER_STR)
         self.fileDialogTitle = self.HED_IMAGE_FILE_TITLE
         self.fileDialogFilter = self.HED_IMAGE_FILE_FILTER
-        
+
         self.dataBox = self._createDataBox()
-        controlBox =  self._createControlBox()
-        
+        controlBox = self._createControlBox()
+
         self.layout.addWidget(self.dataBox)
         self.layout.addWidget(controlBox)
         self.setLayout(self.layout)
-        
-        self.parFile=None
-        
+
+        self.parFile = None
+
         logger.debug(METHOD_EXIT_STR)
-        
+
     @qtCore.Slot()
     def _browseForImageDir(self):
         logger.debug("Entering")
         if self.imageDirTxt.text() == EMPTY_STR:
-            fileName = qtWidgets.QFileDialog.getExistingDirectory(None, \
-                                                   IMAGE_DIR_DIALOG_TITLE)
+            fileName = qtWidgets.QFileDialog.getExistingDirectory(None, IMAGE_DIR_DIALOG_TITLE)
         else:
             fileDirectory = os.path.dirname(str(self.imageDirTxt.text()))
-            fileName = qtWidgets.QFileDialog.getExistingDirectory(None,\
-                                                   IMAGE_DIR_DIALOG_TITLE, \
-                                                   directory = fileDirectory)
-            
+            fileName = qtWidgets.QFileDialog.getExistingDirectory(None, IMAGE_DIR_DIALOG_TITLE, directory=fileDirectory)
+
         if fileName != EMPTY_STR:
             self.imageDirTxt.setText(fileName)
             self.imageDirTxt.editingFinished.emit()
         logger.debug("Exiting")
-    
+
     def checkOkToLoad(self):
         logger.debug("Entering")
         okToLoad = False
         projFileOK = AbstractImagePerFileView.checkOkToLoad(self)
         if projFileOK:
-            parFileName = os.path.join(self.getProjectDir(), \
-                                       self.getProjectName() + 
-                                       self.getProjectExtension())
+            parFileName = os.path.join(self.getProjectDir(), self.getProjectName() + self.getProjectExtension())
             try:
                 self.parFile = S1ParameterFile(parFileName)
                 maxLine = self.parFile.getNumOfLines()
-                self.parFileLineTxt.setRange(1,maxLine)
+                self.parFileLineTxt.setRange(1, maxLine)
                 self.parFileLineRange.setText("1:" + str(maxLine))
                 self.parFileLineTxt.setEnabled(True)
                 self.updateParInfo.emit(1)
-                
+
             except RSMap3DException as ex:
                 logger.warning("Trouble with S1 par file")
                 message = qtWidgets.QMessageBox()
-                message.warning(self, \
-                                 WARNING_STR, \
-                                 str(ex))
-                
+                message.warning(self, WARNING_STR, str(ex))
+
                 self.parFileLineTxt.setEnabled(False)
                 self.resetParInfo.emit()
         else:
             self.parFileLineTxt.setEnabled(False)
         instFileOK = self.instFileOk
         detFileOK = self.detFileOk
-        imageDirOK = os.path.isdir(str(self.imageDirTxt.text())) 
+        imageDirOK = os.path.isdir(str(self.imageDirTxt.text()))
         if projFileOK and instFileOK and detFileOK and imageDirOK:
             okToLoad = True
         self.okToLoad.emit(okToLoad)
-            
-        logger.debug("Exiting" + 
-                     " projFileOK " + str(projFileOK) +
-                     " instFileOK " + str(instFileOK) +
-                     " detFileOK " + str(detFileOK) +
-                     " imageDirOK " + str(imageDirOK) +
-                     " okToLoad " + str(okToLoad))
+
+        logger.debug(
+            "Exiting"
+            + " projFileOK "
+            + str(projFileOK)
+            + " instFileOK "
+            + str(instFileOK)
+            + " detFileOK "
+            + str(detFileOK)
+            + " imageDirOK "
+            + str(imageDirOK)
+            + " okToLoad "
+            + str(okToLoad)
+        )
         return okToLoad
-    
 
     def _createDataBox(self):
-        dataBox = super(S1HighEnergyDiffractionForm,self)._createDataBox()
-        logger.debug ("Entering")
+        dataBox = super()._createDataBox()
+        logger.debug("Entering")
         dataLayout = dataBox.layout()
-        
+
         row = dataLayout.rowCount()
         label = qtWidgets.QLabel("Par File Line")
         self.parFileLineTxt = qtWidgets.QSpinBox()
         self.parFileLineTxt.setValue(1)
         self.parFileLineTxt.setSingleStep(1)
-        self.parFileLineTxt.setRange(1,1)
+        self.parFileLineTxt.setRange(1, 1)
         self.parFileLineRange = qtWidgets.QLabel("1:1")
-        #disable until a good file is found
+        # disable until a good file is found
         self.parFileLineTxt.setEnabled(False)
         dataLayout.addWidget(label, row, 0)
-        dataLayout.addWidget(self.parFileLineTxt,row, 1)
+        dataLayout.addWidget(self.parFileLineTxt, row, 1)
         dataLayout.addWidget(self.parFileLineRange, row, 2)
-        
+
         row = dataLayout.rowCount()
-        
+
         # Setup a place to show setup parameters
         label = qtWidgets.QLabel("Angle Info")
         self.angleRange = qtWidgets.QLabel(self.WAITING_FOR_INPUT)
@@ -158,30 +159,26 @@ class S1HighEnergyDiffractionForm(AbstractImagePerFileView, \
         self.fileInfo = qtWidgets.QLabel(self.WAITING_FOR_INPUT)
         dataLayout.addWidget(label, row, 0)
         dataLayout.addWidget(self.fileInfo, row, 1)
-        
-        
-        
+
         row = dataLayout.rowCount() + 1
         self._createInstConfig(dataLayout, row)
-        
+
         row = dataLayout.rowCount() + 1
         self._createDetConfig(dataLayout, row)
-    
-        row = dataLayout.rowCount()  + 1
+
+        row = dataLayout.rowCount() + 1
         self._createDetectorROIInput(dataLayout, row)
-        
-        row = dataLayout.rowCount()  + 1
+
+        row = dataLayout.rowCount() + 1
         self._createNumberOfPixelsToAverage(dataLayout, row, True)
-        
-        
-        row = dataLayout.rowCount()  + 1
+
+        row = dataLayout.rowCount() + 1
         label = qtWidgets.QLabel("Image Directory:")
         self.imageDirTxt = qtWidgets.QLineEdit()
         self.imageDirBrowseButton = qtWidgets.QPushButton(BROWSE_STR)
         dataLayout.addWidget(label, row, 0)
         dataLayout.addWidget(self.imageDirTxt, row, 1)
         dataLayout.addWidget(self.imageDirBrowseButton, row, 2)
-        
 
         row = dataLayout.rowCount() + 1
         posDoubleValidator = qtGui.QDoubleValidator()
@@ -192,8 +189,8 @@ class S1HighEnergyDiffractionForm(AbstractImagePerFileView, \
         self.detectorDistanceActive = qtWidgets.QLabel()
         dataLayout.addWidget(label, row, 0)
         dataLayout.addWidget(self.detectorDistanceOverrideTxt, row, 1)
-        dataLayout.addWidget(self.detectorDistanceActive,row, 2)
-         
+        dataLayout.addWidget(self.detectorDistanceActive, row, 2)
+
         row = dataLayout.rowCount() + 1
         label = qtWidgets.QLabel("Override Incident Energy: ")
         self.incidentEnergyOverrideTxt = qtWidgets.QLineEdit(str(0.0))
@@ -202,12 +199,12 @@ class S1HighEnergyDiffractionForm(AbstractImagePerFileView, \
         dataLayout.addWidget(label, row, 0)
         dataLayout.addWidget(self.incidentEnergyOverrideTxt, row, 1)
         dataLayout.addWidget(self.incidentEnergyActive, row, 2)
-         
+
         row = dataLayout.rowCount() + 1
         self.angleLimitValidator = qtGui.QDoubleValidator()
         self.angleLimitValidator.setBottom(-360.0)
         self.angleLimitValidator.setTop(360.0)
-#         angleLimitValidator.setNotation(qtGui.QDoubleValidator.StandardNotation)
+        #         angleLimitValidator.setNotation(qtGui.QDoubleValidator.StandardNotation)
         label = qtWidgets.QLabel("Offset Angle: ")
         self.offsetAngleTxt = qtWidgets.QLineEdit(str(0.0))
         self.offsetAngleTxt.setValidator(self.angleLimitValidator)
@@ -215,35 +212,30 @@ class S1HighEnergyDiffractionForm(AbstractImagePerFileView, \
         dataLayout.addWidget(label, row, 0)
         dataLayout.addWidget(self.offsetAngleTxt, row, 1)
         dataLayout.addWidget(self.offsetAngleActive, row, 2)
-        
-        
-        row = dataLayout.rowCount()  + 1
+
+        row = dataLayout.rowCount() + 1
         self._createOutputType(dataLayout, row)
-        
-        row = dataLayout.rowCount()  + 1
+
+        row = dataLayout.rowCount() + 1
         self._createHKLOutput(dataLayout, row)
         self.imageDirBrowseButton.clicked.connect(self._browseForImageDir)
         self.imageDirTxt.editingFinished.connect(self._imageDirChanged)
         self.updateParInfo[int].connect(self._updateParInfo)
         self.resetParInfo.connect(self._resetParInfo)
         self.parFileLineTxt.valueChanged[int].connect(self._parFileLineChanged)
-        self.detectorDistanceOverrideTxt.editingFinished.connect(
-                self._detectorDistanceOverrideChanged)
-        self.incidentEnergyOverrideTxt.editingFinished.connect(
-            self._incidentEnergyOverrideChanged)
-        self.offsetAngleTxt.editingFinished.connect(
-            self._offsetAngleChanged)
+        self.detectorDistanceOverrideTxt.editingFinished.connect(self._detectorDistanceOverrideChanged)
+        self.incidentEnergyOverrideTxt.editingFinished.connect(self._incidentEnergyOverrideChanged)
+        self.offsetAngleTxt.editingFinished.connect(self._offsetAngleChanged)
         self.detSelect.currentTextChanged.connect(self._detectorSelectedIndexChanged)
         logger.debug("Exiting")
-        
-        
+
         return dataBox
-    
+
     @qtCore.Slot()
     def _detectorDistanceOverrideChanged(self):
         logger.debug(METHOD_ENTER_STR)
         overrideDistance = float(self.detectorDistanceOverrideTxt.text())
-        logger.debug("overrideDistance %f " % overrideDistance)
+        logger.debug(f"overrideDistance {overrideDistance:f} ")
         if overrideDistance == 0.0:
             detector = self.detConfig.getDetectorById(str(self.currentDetector))
             logger.debug("detector currently: " + str(detector))
@@ -253,7 +245,7 @@ class S1HighEnergyDiffractionForm(AbstractImagePerFileView, \
             self.detectorDistance = float(self.detectorDistanceOverrideTxt.text())
             self.detectorDistanceActive.setText(str(self.detectorDistance))
         logger.debug(METHOD_EXIT_STR)
-        
+
     @qtCore.Slot(str)
     def _detectorSelectedIndexChanged(self, currentDetector):
         logger.debug(METHOD_ENTER_STR)
@@ -266,90 +258,83 @@ class S1HighEnergyDiffractionForm(AbstractImagePerFileView, \
             self.detectorDistance = float(self.detectorDistanceOverrideTxt.text())
             self.detectorDistanceActive.setText(str(self.detectorDistance))
         logger.debug(METHOD_EXIT_STR)
-        
+
     def getOffsetAngle(self):
-        '''
+        """
         returns an offset angle which will be added to the motor angle on the
         spinning axis
-        '''
+        """
         logger.debug(METHOD_ENTER_STR)
         offsetAngle = float(self.offsetAngleTxt.text())
         logger.debug(METHOD_EXIT_STR % str(offsetAngle))
         return offsetAngle
-    
+
     def getDataSource(self):
         logger.debug(METHOD_ENTER_STR)
         if self.getOutputType() == self.SIMPLE_GRID_MAP_STR:
             self.transform = UnityTransform3D()
         elif self.getOutputType() == self.POLE_MAP_STR:
-            self.transform = \
-                PoleMapTransform3D(projectionDirection=\
-                                   self.getProjectionDirection())
+            self.transform = PoleMapTransform3D(projectionDirection=self.getProjectionDirection())
         else:
             self.transform = None
-        
-        self.dataSource = \
-            S1HighEnergyDiffractionDS(str(self.getProjectDir()), \
-                                   str(self.getProjectName()), \
-                                   str(self.getProjectExtension()), \
-                                   str(self.getInstConfigName()), \
-                                   str(self.getDetConfigName()), \
-                                   str(self.getImageDirName()), \
-                                   transform = self.transform, \
-                                   scanList = self.getScanList(), \
-                                   roi = self.getDetectorROI(), \
-                                   pixelsToAverage = \
-                                    [1,1], \
-                                 badPixelFile = None, \
-                                 flatFieldFile = None, \
-                                 detectorDistanceOverride = \
-                                    self.getDetectorDistanceOverride(), \
-                                 incidentEnergyOverride = 
-                                    self.getIncidentEnergyOverride(), \
-                                offsetAngle = self.getOffsetAngle(), \
-                                appConfig = self.appConfig
-                                )
+
+        self.dataSource = S1HighEnergyDiffractionDS(
+            str(self.getProjectDir()),
+            str(self.getProjectName()),
+            str(self.getProjectExtension()),
+            str(self.getInstConfigName()),
+            str(self.getDetConfigName()),
+            str(self.getImageDirName()),
+            transform=self.transform,
+            scanList=self.getScanList(),
+            roi=self.getDetectorROI(),
+            pixelsToAverage=[1, 1],
+            badPixelFile=None,
+            flatFieldFile=None,
+            detectorDistanceOverride=self.getDetectorDistanceOverride(),
+            incidentEnergyOverride=self.getIncidentEnergyOverride(),
+            offsetAngle=self.getOffsetAngle(),
+            appConfig=self.appConfig,
+        )
         self.dataSource.setProgressUpdater(self.updateProgress)
         self.dataSource.setCurrentDetector(self.currentDetector)
-        self.dataSource.loadSource(mapHKL = self.getMapAsHKL())
+        self.dataSource.loadSource(mapHKL=self.getMapAsHKL())
 
         logger.debug(METHOD_EXIT_STR)
         return self.dataSource
-    
+
     def getDetectorDistanceOverride(self):
-        '''
+        """
         return a value to override the detector distance in the detector
         config file
-        '''
+        """
         logger.debug(METHOD_ENTER_STR)
-        detectorDistanceOverride = \
-            float(self.detectorDistanceOverrideTxt.text())
+        detectorDistanceOverride = float(self.detectorDistanceOverrideTxt.text())
         logger.debug(METHOD_ENTER_STR % str(detectorDistanceOverride))
         return detectorDistanceOverride
-    
-    
-    
-    
+
     def getImageDirName(self):
         return str(self.imageDirTxt.text())
-        
+
     def getIncidentEnergyOverride(self):
-        '''
-        get a value to override the energy read from the instrument par file 
+        """
+        get a value to override the energy read from the instrument par file
         used to load up the values associated with differrent scans.
-        '''
+        """
         logger.debug(METHOD_ENTER_STR)
         incidentEnergyOverride = float(self.incidentEnergyOverrideTxt.text())
         logger.debug(METHOD_EXIT_STR % str(incidentEnergyOverride))
         return incidentEnergyOverride
- 
+
     def getScanList(self):
         logger.debug(METHOD_ENTER_STR)
-        scan = int (self.parFileLineTxt.value())
-        scanList = [scan,]
+        scan = int(self.parFileLineTxt.value())
+        scanList = [
+            scan,
+        ]
         logger.debug(METHOD_EXIT_STR + str(scanList))
         return scanList
-    
+
     def getOutputForms(self):
         logger.debug(METHOD_ENTER_STR)
 
@@ -361,15 +346,11 @@ class S1HighEnergyDiffractionForm(AbstractImagePerFileView, \
     @qtCore.Slot()
     def _imageDirChanged(self):
         logger.debug(METHOD_ENTER_STR)
-        if os.path.isdir(self.imageDirTxt.text()) or \
-            self.imageDirTxt.text() == EMPTY_STR:
+        if os.path.isdir(self.imageDirTxt.text()) or self.imageDirTxt.text() == EMPTY_STR:
             self.checkOkToLoad()
         else:
-            message = qtWidgets.QMessageBox() 
-            message.warning(self, \
-                             WARNING_STR
-                             , \
-                             "The IMM file entered is invalid")
+            message = qtWidgets.QMessageBox()
+            message.warning(self, WARNING_STR, "The IMM file entered is invalid")
         logger.debug(METHOD_EXIT_STR)
 
     @qtCore.Slot()
@@ -378,42 +359,55 @@ class S1HighEnergyDiffractionForm(AbstractImagePerFileView, \
         self.incidentEnergyOverride = float(self.incidentEnergyOverrideTxt.text())
         lines = int(self.parFileLineTxt.text())
         if self.incidentEnergyOverride == 0.0:
-            self.incidentEnergy = self.parFile.getEnergy([lines,])[lines]
-            self.incidentEnergyActive.setText((str(self.incidentEnergy[INCIDENT_ENERGY])))
+            self.incidentEnergy = self.parFile.getEnergy(
+                [
+                    lines,
+                ]
+            )[lines]
+            self.incidentEnergyActive.setText(str(self.incidentEnergy[INCIDENT_ENERGY]))
         else:
-            self.incidentEnergyActive.setText((str(self.incidentEnergyOverride)))
+            self.incidentEnergyActive.setText(str(self.incidentEnergyOverride))
         logger.debug(METHOD_EXIT_STR)
-        
+
     @qtCore.Slot()
     def _offsetAngleChanged(self):
         logger.debug(METHOD_ENTER_STR)
-        state = self.angleLimitValidator.validate(self.offsetAngleTxt.text(),0)
+        state = self.angleLimitValidator.validate(self.offsetAngleTxt.text(), 0)
         logger.debug(METHOD_EXIT_STR + str(state))
-        
+
     @qtCore.Slot(int)
     def _parFileLineChanged(self, lineNum):
         self.updateParInfo.emit(lineNum)
-    
+
     @qtCore.Slot()
     def _resetParInfo(self):
         self.angleRange.setText(self.WAITING_FOR_INPUT)
-        self.fileInfo.setText(self.WAITING_FOR_INPUT)        
+        self.fileInfo.setText(self.WAITING_FOR_INPUT)
 
     @qtCore.Slot(int)
     def _updateParInfo(self, lines):
         logger.debug("lines: " + str(lines))
-        angleData = self.parFile.getAngleData([lines,])
-        fileData = self.parFile.getFileData([lines,])
-        logger.debug("updating angle info to "  + str(angleData))
-        logger.debug("updating file info to "  + str(fileData))
+        angleData = self.parFile.getAngleData(
+            [
+                lines,
+            ]
+        )
+        fileData = self.parFile.getFileData(
+            [
+                lines,
+            ]
+        )
+        logger.debug("updating angle info to " + str(angleData))
+        logger.debug("updating file info to " + str(fileData))
         self.angleRange.setText(str(angleData))
         self.fileInfo.setText(str(fileData))
         self.incidentEnergyOverride = float(self.incidentEnergyOverrideTxt.text())
         if self.incidentEnergyOverride == 0.0:
-            self.incidentEnergy = self.parFile.getEnergy([lines,])[lines]
-            self.incidentEnergyActive.setText((str(self.incidentEnergy[INCIDENT_ENERGY])))
+            self.incidentEnergy = self.parFile.getEnergy(
+                [
+                    lines,
+                ]
+            )[lines]
+            self.incidentEnergyActive.setText(str(self.incidentEnergy[INCIDENT_ENERGY]))
         else:
-            self.incidentEnergyActive.setText((str(self.incidentEnergyOverride)))
-            
-                
-                
+            self.incidentEnergyActive.setText(str(self.incidentEnergyOverride))

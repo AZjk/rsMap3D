@@ -1,13 +1,14 @@
-'''
- Copyright (c) 2026, UChicago Argonne, LLC
- See LICENSE file.
-'''
+"""
+Copyright (c) 2026, UChicago Argonne, LLC
+See LICENSE file.
+"""
+
 import argparse
 import json
 
 
 def _load_config(config_path):
-    with open(config_path, 'r') as config_file:
+    with open(config_path) as config_file:
         return json.load(config_file)
 
 
@@ -47,15 +48,19 @@ def main(argv=None):
 
     if args.command in (None, "gui"):
         from rsMap3D.rsmEdit import main as gui_main
+
         gui_main()
     elif args.command == "map-angle-scan":
         from rsMap3D.workflows import angle_scan
+
         angle_scan.run(_load_config(args.config_path))
     elif args.command == "map-parametric-scan":
         from rsMap3D.workflows import parametric_scan
+
         parametric_scan.run(_load_config(args.config_path))
     elif args.command == "powder-scan":
         from rsMap3D.workflows import powder_scan
+
         powder_scan.run(_load_config(args.config_path))
 
 

@@ -1,7 +1,8 @@
-'''
- Copyright (c) 2014, UChicago Argonne, LLC
- See LICENSE file.
-'''
+"""
+Copyright (c) 2014, UChicago Argonne, LLC
+See LICENSE file.
+"""
+
 BLOCK_TABS_FOR_LOAD_SIGNAL = "blockTabsForLoad"
 BLOCK_TABS_FOR_PROCESS_SIGNAL = "blockTabsForProcess"
 CANCEL_LOAD_FILE_SIGNAL = "cancelLoadFile"

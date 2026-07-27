@@ -1,7 +1,8 @@
-'''
- Copyright (c) 2026, UChicago Argonne, LLC
- See LICENSE file.
-'''
+"""
+Copyright (c) 2026, UChicago Argonne, LLC
+See LICENSE file.
+"""
+
 import json
 
 from rsMap3D import cli
