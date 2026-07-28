@@ -191,7 +191,9 @@ class s28waxpcsSpecDataSource(SpecXMLDrivenDataSource):
                 self.fixGeoAngles(scan, geoAngles)
             except Exception as ex:
                 tb = traceback.format_exc()
-                raise RSMap3DException("Handling exception in getGeoAngles." + "\n" + str(ex) + "\n" + str(tb)) from None
+                raise RSMap3DException(
+                    "Handling exception in getGeoAngles." + "\n" + str(ex) + "\n" + str(tb)
+                ) from None
         logger.debug("getGeoAngles:\n" + str(geoAngles))
         return geoAngles
 

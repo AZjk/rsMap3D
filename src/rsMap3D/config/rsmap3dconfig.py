@@ -67,7 +67,9 @@ class RSMap3DConfig:
         try:
             return int(maxIMem.text)
         except (TypeError, ValueError):
-            raise RSMap3DException("Config file " + self.configFile + " maxImageMemory does not set a number correctly") from None
+            raise RSMap3DException(
+                "Config file " + self.configFile + " maxImageMemory does not set a number correctly"
+            ) from None
 
 
 class RSMap3DConfigNotFound(RSMap3DException):
