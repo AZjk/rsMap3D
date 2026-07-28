@@ -58,7 +58,7 @@ class XPCSSpecScanFileForm(SpecXMLDrivenFileForm):
                 try:
                     filePath = scan.CCD["image_dir"][0]
                     self.pathToReplaceTxt.setText(filePath)
-                except:
+                except Exception:
                     qtWidgets.QMessageBox.warning(self, "File patgh not Found", f"File path not found for scan {scan}")
 
             self.pathToReplaceTxt.editingFinished.emit()

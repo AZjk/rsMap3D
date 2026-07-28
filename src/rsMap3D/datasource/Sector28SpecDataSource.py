@@ -99,7 +99,7 @@ class Sector28SpecDataSource(SpecXMLDrivenDataSource):
                 + "_calc_eulerian_from_kappa in inst config "
                 + "file\n"
                 + str(ex)
-            )
+            ) from None
 
         _t1 = np.arctan(np.tan(kappa / 2.0) * np.cos(self.kalpha))
         if self.kappa_inverted:
@@ -191,7 +191,7 @@ class Sector28SpecDataSource(SpecXMLDrivenDataSource):
                 self.fixGeoAngles(scan, geoAngles)
             except Exception as ex:
                 tb = traceback.format_exc()
-                raise RSMap3DException("Handling exception in getGeoAngles." + "\n" + str(ex) + "\n" + str(tb))
+                raise RSMap3DException("Handling exception in getGeoAngles." + "\n" + str(ex) + "\n" + str(tb)) from None
         logger.debug("getGeoAngles:\n" + str(geoAngles))
         return geoAngles
 
@@ -205,7 +205,7 @@ class Sector28SpecDataSource(SpecXMLDrivenDataSource):
             ub = g3.reshape(-1, 3)
             logger.debug("ub " + str(ub))
             return ub
-        except:
+        except Exception:
             logger.error("Unable to read UB Matrix from G3")
             logger.error("-" * 60)
             traceback.print_exc(file=sys.stdout)
@@ -317,7 +317,7 @@ class Sector28SpecDataSource(SpecXMLDrivenDataSource):
             if self.progressUpdater is not None:
                 self.progressUpdater(self.progressMax, self.progressMax)
         except OSError:
-            raise OSError("Cannot open file " + str(self.specFile))
+            raise OSError("Cannot open file " + str(self.specFile)) from None
         if len(self.getAvailableScans()) == 0:
             raise ScanDataMissingException(
                 "Could not find scan data for "
@@ -343,7 +343,7 @@ class Sector28SpecDataSource(SpecXMLDrivenDataSource):
           False: "", "0", "faLse", "no", "n", "f"
         Non-string values are passed to bool.
         """
-        if type(value) == str:
+        if isinstance(value, str):
             if value.lower() in ("yes", "y", "true", "t", "1"):
                 return True
             if value.lower() in ("no", "n", "false", "f", "0", ""):

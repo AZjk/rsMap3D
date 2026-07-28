@@ -62,7 +62,7 @@ class QGridMapper(AbstractGridMapper):
             gridder.dataRange(
                 rangeBounds[0], rangeBounds[1], rangeBounds[2], rangeBounds[3], rangeBounds[4], rangeBounds[5], True
             )
-        except:
+        except Exception:
             # xrayutilities 1.0.6 and below
             gridder.dataRange(
                 (rangeBounds[0], rangeBounds[1]),
@@ -116,7 +116,7 @@ class QGridMapper(AbstractGridMapper):
                                 print("qy Size: " + str(qy.shape))
                                 print("qz Size: " + str(qz.shape))
                                 print("intensity Size: " + str(intensity.shape))
-                                raise InputError(ex)
+                                raise InputError(ex) from None
                         else:
                             # ===== ZZ
                             progress += 1.0 / nPasses * 100.0 / data_segment

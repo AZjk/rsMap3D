@@ -42,7 +42,7 @@ class DetectorGeometryForXrayutilitiesReader(DetectorGeometryBase):
         try:
             tree = ET.parse(filename)
         except OSError as ex:
-            raise DetectorConfigException("Bad Detector Configuration File" + str(ex))
+            raise DetectorConfigException("Bad Detector Configuration File" + str(ex)) from None
         self.root = tree.getroot()
         logger.debug(METHOD_EXIT_STR)
 
@@ -57,7 +57,7 @@ class DetectorGeometryForXrayutilitiesReader(DetectorGeometryBase):
         try:
             centerPix = detector.find(self.CENTER_CHANNEL_PIXEL).text
         except AttributeError:
-            raise DetectorConfigException(self.CENTER_CHANNEL_PIXEL + " not found in detector config " + "file")
+            raise DetectorConfigException(self.CENTER_CHANNEL_PIXEL + " not found in detector config " + "file") from None
         vals = centerPix.split()
         logger.debug(METHOD_EXIT_STR + str([int(vals[0]), int(vals[1])]))
         return [int(vals[0]), int(vals[1])]

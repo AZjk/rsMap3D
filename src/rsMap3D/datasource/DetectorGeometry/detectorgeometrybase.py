@@ -25,7 +25,7 @@ class DetectorGeometryBase:
         try:
             tree = ET.parse(filename)
         except OSError as ex:
-            raise DetectorConfigException("Bad Detector Configuration File" + str(ex))
+            raise DetectorConfigException("Bad Detector Configuration File" + str(ex)) from None
         self.root = tree.getroot()
         logger.debug("Exit")
 
@@ -65,7 +65,7 @@ class DetectorGeometryBase:
         try:
             dets = self.getDetectors().findall(self.DETECTOR)
         except AttributeError:
-            raise DetectorConfigException("No detectors found in detector " + "config file")
+            raise DetectorConfigException("No detectors found in detector " + "config file") from None
         logger.debug(str(dets))
         for detector in dets:
             detId = detector.find(self.DETECTOR_ID)

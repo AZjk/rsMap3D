@@ -132,7 +132,7 @@ class srange:
         self.last_item = val
         try:
             after = self.next()
-        except:
+        except Exception:
             after = None
         self.last_item = last_save
         return after
@@ -389,7 +389,7 @@ class srange:
         if self.r.find("@") > 0:
             raise ValueError("Invalid character ('@') in string range.")
 
-        l = []
+        result_list = []
         singles = self.r.split(",")
         for single in singles:
             s = single.lstrip()
@@ -408,8 +408,8 @@ class srange:
                 lo = sys.maxsize
             try:
                 lo = int(lo)
-            except:
-                raise ValueError("Values in string range must be integers.")
+            except Exception:
+                raise ValueError("Values in string range must be integers.") from None
 
             if hi:
                 hi = hi.strip()
@@ -419,14 +419,14 @@ class srange:
                     hi = sys.maxsize
                 try:
                     hi = int(hi)
-                except:
-                    raise ValueError("Values in string range must be integer.")
+                except Exception:
+                    raise ValueError("Values in string range must be integer.") from None
             else:
                 hi = lo
 
-            l.append((lo, hi))
+            result_list.append((lo, hi))
 
-        return l
+        return result_list
 
     def _tuple_list_is_monotonic(self):
         """
@@ -444,7 +444,7 @@ class srange:
             last_hi = hi
         return True
 
-    def _tuple_list_to_str(self, l):
+    def _tuple_list_to_str(self, lst):
         """
         Convert a list of tuples to a string range.
 
@@ -455,12 +455,12 @@ class srange:
 
         """
 
-        if not l:
+        if not lst:
             return ""
 
-        (last_lo, last_hi) = l[0]
+        (last_lo, last_hi) = lst[0]
         range_string = ""
-        for lo, hi in l:
+        for lo, hi in lst:
             if lo > last_hi + 1:
                 # not a continuation, save to r
                 if range_string:

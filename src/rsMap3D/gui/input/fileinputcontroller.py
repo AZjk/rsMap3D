@@ -159,9 +159,6 @@ class FileInputController(qtWidgets.QDialog):
         except Transform3DException as e:
             self.fileError.emit(str(e))
             return
-        except ScanDataMissingException as e:
-            self.fileError.emit(str(e))
-            return
         except RSMap3DException as e:
             self.fileError.emit(str(e))
             return

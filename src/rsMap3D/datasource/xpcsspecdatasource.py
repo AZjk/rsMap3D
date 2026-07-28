@@ -85,7 +85,7 @@ class XPCSSpecDataSource(SpecXMLDrivenDataSource):
             ub = g3.reshape(-1, 3)
             logger.debug("ub " + str(ub))
             return ub
-        except:
+        except Exception:
             logger.error("Unable to read UB Matrix from G3")
             logger.error("-" * 60)
             traceback.print_exc(file=sys.stdout)
@@ -262,7 +262,7 @@ class XPCSSpecDataSource(SpecXMLDrivenDataSource):
             if self.progressUpdater is not None:
                 self.progressUpdater(self.progressMax, self.progressMax)
         except OSError:
-            raise OSError("Cannot open file " + str(self.specFile))
+            raise OSError("Cannot open file " + str(self.specFile)) from None
         #         if len(self.getAvailableScans()) == 0:
         #             raise ScanDataMissingException("Could not find scan data for " + \
         #                                            "input file \n" + self.specFile + \
@@ -373,10 +373,9 @@ class XPCSSpecDataSource(SpecXMLDrivenDataSource):
                         fp.close()
                         if numImagesInFile < numDarks:
                             raise RSMap3DException(
-                                "dark file %s contains "
-                                + "only %d images.  Spec "
-                                + "file says there should "
-                                + "be %d" % (darkName, numImagesInFile, numDarks)
+                                f"dark file {darkName} contains "
+                                f"only {numImagesInFile} images. Spec "
+                                f"file says there should be {numDarks}"
                             )
                         imageStartIndex, dlen = GetStartPositions(darkName, numDarks)
                         images = OpenMultiImm(darkName, darksToSkip - 1, numDarks - darksToSkip, imageStartIndex, dlen)

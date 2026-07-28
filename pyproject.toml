@@ -55,7 +55,7 @@ exclude = [
 
 [tool.ruff.lint]
 select = ["E", "F", "W", "I", "UP", "B", "C90"]
-ignore = ["E501"]
+ignore = ["E402", "E501", "C901", "UP031"]
 
 [tool.ruff.lint.isort]
 known-first-party = ["rsMap3D"]

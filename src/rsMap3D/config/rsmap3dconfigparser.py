@@ -69,7 +69,7 @@ class RSMap3DConfigParser(ConfigParser):
                 logger.debug("Found existing logfile " + str(self.configFile))
                 self.read(self.configFile)
         except Exception as ex:
-            raise RSMap3DException(str(ex))
+            raise RSMap3DException(str(ex)) from None
 
     def buildDefaultConfig(self):
         logging.debug(METHOD_ENTER_STR)

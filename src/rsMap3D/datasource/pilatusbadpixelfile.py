@@ -61,7 +61,7 @@ class PilatusBadPixelFile:
                     + str(line_num)
                     + " badX1,badY1 replacementX1,replacementY1\n"
                     + str(ex)
-                )
+                ) from None
 
     def getNumPixels(self):
         """

@@ -44,7 +44,7 @@ class RSMap3DConfig:
                     raise RSMap3DConfigNotFound("File " + self.configFile + " was not found")
             tree = ET.parse(self.configFile)
         except OSError as ex:
-            raise (RSMap3DException("Bad config file for rsMap3D " + str(self.configFile) + "\n" + str(ex)))
+            raise RSMap3DException("Bad config file for rsMap3D " + str(self.configFile) + "\n" + str(ex)) from None
         self.root = tree.getroot()
 
     def createConfigFile(self):
@@ -67,7 +67,7 @@ class RSMap3DConfig:
         try:
             return int(maxIMem.text)
         except (TypeError, ValueError):
-            raise RSMap3DException("Config file " + self.configFile + " maxImageMemory does not set a number correctly")
+            raise RSMap3DException("Config file " + self.configFile + " maxImageMemory does not set a number correctly") from None
 
 
 class RSMap3DConfigNotFound(RSMap3DException):

@@ -45,7 +45,7 @@ class InstForXrayutilitiesReader:
         try:
             tree = ET.parse(filename)
         except OSError as ex:
-            raise (InstConfigException("Bad Instrument Configuration File" + str(ex)))
+            raise InstConfigException("Bad Instrument Configuration File" + str(ex)) from None
         self.root = tree.getroot()
 
     def getCircleAxisNumber(self, circle):
@@ -58,7 +58,7 @@ class InstForXrayutilitiesReader:
         except KeyError:
             raise InstConfigException(
                 "Axis number is empty in \n" + ET.tostring(circle).decode() + "\nIn the instrument config file"
-            )
+            ) from None
         return int(axisNumberStr)
 
     def getDetectorCircleDirections(self):
@@ -357,7 +357,7 @@ class InstForXrayutilitiesReader:
                     + "axis direction in\n"
                     + ET.tostring(circle).decode()
                     + "\nIn the instrument config file"
-                )
+                ) from None
             data.append((int(axisNum), directionAxis))
         data.sort()
         directions = []
@@ -381,7 +381,7 @@ class InstForXrayutilitiesReader:
                     + "motorName in\n"
                     + ET.tostring(circle).decode()
                     + "\nIn the instrument config file"
-                )
+                ) from None
             data.append((int(axisNumber), motorName))
         data.sort()
         names = []
@@ -410,6 +410,6 @@ class InstForXrayutilitiesReader:
                     "Values and axis numbers in "
                     + ET.tostring(direction).decode()
                     + " in instrument configuration file"
-                )
+                ) from None
 
         return [refAxis[1], refAxis[2], refAxis[3]]
