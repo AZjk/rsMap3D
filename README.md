@@ -249,7 +249,7 @@ rsMap3D/
 
 ## License
 
-Copyright (c) 2012–2026, UChicago Argonne, LLC. All Rights Reserved. See [LICENSE](LICENSE).
+Apache License 2.0. Copyright © 2012–2026 UChicago Argonne, LLC. See [LICENSE](LICENSE).
 
 ## Credits
 
