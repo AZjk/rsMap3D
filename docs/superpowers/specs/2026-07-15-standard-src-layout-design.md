@@ -116,8 +116,7 @@ These were confirmed interactively before writing this spec:
     - Core: `PyQt5`, `vtk`, `numpy`, `xrayutilities`, `h5py`, `hdf5plugin`,
       `matplotlib`, `spec2nexus`, `pillow`.
     - `[project.optional-dependencies] xpcs = ["pyepics"]` for the
-      NSLS-II/XPCS-only data sources (`pyimm` is not on PyPI and stays a
-      documented manual install, not a declared dependency).
+      (pyepics for realtime EPICS scan polling).
 11. **Eclipse/PyDev metadata (`.project`, `.pydevproject`) is deleted** —
     stale, references a Python 2.7 interpreter, not used by any tooling
     once the project is driven by `pyproject.toml`.
@@ -258,5 +257,5 @@ decision 3). `rsmEdit.py`'s `if __name__ == "__main__":` block becomes
   inadvertently change. The implementation plan should specify each
   script's current parameter set precisely and verify identical output on
   a known fixture before/after.
-- `pyimm` and ParaView are not pip-installable; anything that imports them
-  can only be smoke-tested where those are already available.
+- ParaView is not pip-installable; anything that imports it
+  can only be smoke-tested where it is already available.

@@ -7,7 +7,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 rsMap3D is a PySide6 desktop application (from the Advanced Photon Source, Argonne National Lab) that
 transforms images collected during an x-ray scattering experiment into a 3D reciprocal space map,
 using `xrayutilities` for the underlying Q-space calculations. It supports several beamline-specific
-data formats (spec files + area-detector images, HDF5/NeXus, XPCS/IMM), and can output VTI volumes,
+data formats (spec files + area-detector images, HDF5/NeXus), and can output VTI volumes,
 TIFF image stacks, or CSV data.
 
 The repo uses a standard `src/` layout: the importable package lives at `src/rsMap3D/` (import path
@@ -50,7 +50,7 @@ sample configs for `map-angle-scan`. `rsMap3D --help` / `rsMap3D <subcommand> --
 Declared in `pyproject.toml`: `PySide6`, `vtk`, `numpy`, `xrayutilities`, `h5py`, `hdf5plugin`,
 `matplotlib`, `spec2nexus`, `pillow`. Optional extras: `pip install -e ".[xpcs]"` adds `pyepics`
 (needed by the XPCS/NSLS-II-specific data sources and the angle-scan workflow's realtime-scan-polling
-feature); `pip install -e ".[dev]"` adds `pytest`. `pyimm` (used by the IMM/XPCS datasource) and
+feature); `pip install -e ".[dev]"` adds `pytest`. ParaView
 `paraview` (used by `scripts/paraview/*.py`) are not on PyPI and remain manual installs — check imports
 in the relevant `datasource`/`scripts` module before assuming either is available.
 
@@ -86,7 +86,7 @@ before trusting it rather than assuming a clean pass.
 ### Data flow
 
 1. A **DataSource** (`src/rsMap3D/datasource/`) knows how to load a beamline's raw scan format (spec
-   file + images, HDF5/NeXus, IMM) and turn it into arrays of angles/intensities plus Q-space
+   file + images, HDF5/NeXus) and turn it into arrays of angles/intensities plus Q-space
    geometry (sample/detector circles, UB matrix, wavelength, ROI, bad-pixel/flat-field corrections).
 2. A **Mapper** (`src/rsMap3D/mappers/`) drives `xrayutilities` to grid the raw angle/intensity data
    from a DataSource into a regular 3D Q-space grid (`gridmapper.py`), a powder/1D profile
@@ -104,7 +104,7 @@ before trusting it rather than assuming a clean pass.
   (`datasource/AbstractXrayUtilitiesDataSource.py`) → beamline-specific sources such as
   `Sector33SpecDataSource`, `Sector12SpecDataSource`, `Sector28SpecDataSource`,
   `NSLSIISector4SpecDataSource`, `sector34nexusescansource.Sector34NexusEscanSource`,
-  `s1highenergydiffractionds`, `xpcsspecdatasource`. Several sector-specific spec sources share
+  `s1highenergydiffractionds`. Several sector-specific spec sources share
   common logic via `specxmldrivendatasource.SpecXMLDrivenDataSource`.
 - `AbstractGridMapper` (`mappers/abstractmapper.py`) → `gridmapper.QGridMapper`,
   `powderscanmapper.PowderScanMapper`, `xpcsgridlocationmapper`.

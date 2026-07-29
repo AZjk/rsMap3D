@@ -58,12 +58,11 @@ pip install -e ".[dev]"
 
 ### Optional / Manual
 
-- **pyimm** — required only for the `XPCSSpecDataSource` (IMM/XPCS format). Not on PyPI; obtain from the beamline infrastructure.
 - **ParaView** — required for `scripts/paraview/` plotting scripts, which use `pvpython` (ParaView's bundled Python interpreter), not the conda env.
 
 ## Supported data formats
 
-rsMap3D provides beamline-specific data sources for spec files, HDF5/NeXus, and IMM formats.
+rsMap3D provides beamline-specific data sources for spec files, HDF5/NeXus, and .par param formats.
 
 | Source | Format | Beamline / Facility |
 |--------|--------|---------------------|
@@ -76,7 +75,6 @@ rsMap3D provides beamline-specific data sources for spec files, HDF5/NeXus, and 
 | `S1HighEnergyDiffractionDS` | .par param + binary frames | APS 1-BM |
 | `s8waxpcsSpecDataSource` | SPEC + HDF5 (XPCS) | APS 8-ID-E |
 | `s28waxpcsSpecDataSource` | SPEC + HDF5 (XPCS) | APS CHEX 28-ID |
-| `XPCSSpecDataSource` | SPEC + IMM files | APS XPCS beamlines |
 
 Each data source reads **instrument geometry** and **detector geometry** from XML config files (sample/detector circles, primary beam direction, pixel size, distance, etc.).
 
@@ -107,8 +105,7 @@ AbstractDataSource
               ├── NSLSIISector4SpecDataSource
               ├── Sector12NSLSIISpecDataSource
               ├── s8waxpcsSpecDataSource
-              ├── s28waxpcsSpecDataSource
-              └── XPCSSpecDataSource
+              └── s28waxpcsSpecDataSource
         └── S1HighEnergyDiffractionDS
   └── Sector34NexusEscanSource
 

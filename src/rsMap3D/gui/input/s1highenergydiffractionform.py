@@ -350,7 +350,7 @@ class S1HighEnergyDiffractionForm(
             self.checkOkToLoad()
         else:
             message = qtWidgets.QMessageBox()
-            message.warning(self, WARNING_STR, "The IMM file entered is invalid")
+            message.warning(self, WARNING_STR, "The entered file path is invalid")
         logger.debug(METHOD_EXIT_STR)
 
     @qtCore.Slot()

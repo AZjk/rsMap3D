@@ -36,16 +36,6 @@ from rsMap3D.gui.rsmap3dsignals import (
 from rsMap3D.transforms.polemaptransform3d import PoleMapTransform3D
 from rsMap3D.transforms.unitytransform3d import UnityTransform3D
 
-try:
-    from rsMap3D.gui.input.xpcsspecscanfileform import XPCSSpecScanFileForm
-
-    USE_XPCS = True
-
-except Exception as ex:
-    logger.debug(ex)
-    traceback.print_exc()
-    USE_XPCS = False
-
 
 class FileInputController(qtWidgets.QDialog):
     """
@@ -78,8 +68,6 @@ class FileInputController(qtWidgets.QDialog):
         self.fileForms.append(S12SpecScanFileForm)
         self.fileForms.append(S34HDFEScanFileForm)
         self.fileForms.append(S1HighEnergyDiffractionForm)
-        if USE_XPCS:
-            self.fileForms.append(XPCSSpecScanFileForm)
 
         controlLayout = qtWidgets.QHBoxLayout()
         label = qtWidgets.QLabel("Input from:")
