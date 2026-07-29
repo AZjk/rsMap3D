@@ -1,148 +1,256 @@
 # rsMap3D
 
-rsMap3D is a Python program for transforming a set of images collected as part of an 
-x-ray scattering experiment into a 3D reciprocal space map.  
+> Map x-ray scattering images into 3D reciprocal space maps
 
+rsMap3D transforms raw x-ray diffraction images collected during synchrotron beamline experiments into **reciprocal space maps (RSMs)** using [xrayutilities](https://pypi.org/project/xrayutilities/) for the Q-space calculations. It runs as a **PySide6 desktop application** or as **headless CLI workflows** driven by JSON configs.
 
-Version 1.0.8 of xrayutilities was tested on Windows 7 with:
-      6/10/2016
-      xrayutilities-1.2.1-cp27-cp27m-win_amd64.whl found at 
-      https://confluence.aps.anl.gov/display/RSM/Binary+Distributions+of+Python+Packages
-      
-      spec2nexus 2016.0601.0 installed via pip install from pypi.
-      
-      For Mac and Linux, it is best to use the same versions from pypi install 
-      with pip install
-      
-      Fixed an issue with calculating angles when doing sixc geometry and 
-      scanning a real angle.  The code was acting like it needed to compute from
-      pseudo angle scan.
-      
-Version 1.0.9 testes with same versions as above:
-      Fixed an issue with pole figure maps.  Had a couple of bugs left from
-      recent refactoring.
-      
-Version 1.0.10 
-      Test with  same xrayutilites
-      Add code to Sector33SpecDataSource to handle runs that have been aborted.
-      To work with spec files that have beamline specific entries, not handled by 
-      a plugin must have spec2nexus version 2016.0615.1. 
+## Quick start
 
-Version 1.0.13   -  2016/10/27
-      The structure of input and output controls, and on the back end DataSource 
-      classes and Mapper classes have been reworked to allow output of data to 
-      different formats.  In particular, the input Forms hold information on what 
-      type of output is allowed/needed for that kind of data.  Up till this point,
-      only output to VTI files was allowed.  A stock list of input forms is still 
-      provided.  A pull-down combo box allows switching between input forms,  As
-      a different form is selected, a list of allowed output forms is created and 
-      placed on the "Process Data" tab.  The default form is set active.  Each output 
-      form can then also specify a list of "Writers" to be used for selecting the format
-      of the output data.  At this point vti (the only choice till now), a stack of TIFF 
-      images, slicing through the 3D volume, and for XPCS data, a CSV file containing the 
-      qx, qy, qz values for the single position used to collect time series data in an 
-      XPCS scan.
-      Energy scan data from sector 34 is working, but at present writes only VTI files.
-      The Sector 33 scan format is working for sector 7, & 30.  Still working along with
-      these beamlines to do some post processing.
-      
-Version 1.0.14   -  2016/10/27
-      Needed to fix list of packages in setup.py did a re-release.      
+```bash
+# GUI mode (default)
+rsMap3D
 
-Version 1.0.15   -  2016/10/27
-      Needed to fix list of packages in setup.py did a re-release.
-      
-Version 1.0.16   -  2016/10/31
-      Needed to fix handling method when pyimm is not found.ZZ
-      
-Version 1.0.17	- Changes to allow output of ascii vti file.
+# Headless workflows
+rsMap3D map-angle-scan config.json
+rsMap3D map-parametric-scan config.json
+rsMap3D powder-scan config.json
+```
 
-Version 1.0.18	- 2016-11-8 
-       Readd missing string constant in common strings file.
-       
-Version 1.0.19	- 2016-11-8 
-       Readd missing string logger constants in common strings file.
-       
-Version 1.0.20  - 2017-03-03
-		Changed the Signal/Slot mechanism to use a newer version that will be 
-		used moving forward.  This will allow moving more easily to Python 3 and
-		PyQt 5.x.  Note that for now there are issues with VTK/PyQt integration
-		with PyQt 5.x so for now need to stick with PyQt 4.11 and Python 2.7.
-		Fixed a problem introduced when the output of data was split out into 
-		writers.  The calculation of y data (qy or k) was using x-data instead of 
-		Y.  This did not cause a problem when X&Y were using same range but
-		when they were different, qy/k was wrong.
-		
-Version 1.1.0   - 2017-05-22
-        Switch Configuration to use python's config parser
-        Made it possible to edit which 
-        
-Version 1.1.1    - 2017-06-08
-        Change the angle mapping code esp in S33SpecDataSource so that the angle
-        mapping function can live in a module outside of the S33SpecDataSource 
-        class.  This will make it easier for the user to add mapping functions.
-        Now they would simply need to add a module to the PYTHONPATH, and add 
-        the module name (w/ package path if necessary).  
+## Installation
 
-Version 1.1.2    - 2017-06-08
-	Revert s1highenergydatasource to a previous version with no mpi
+rsMap3D requires **Python 3.9+** and **PySide6** with **VTK 8.2+**.
 
-Version 1.1.3    - 2017-06-08
-	Remove @profile from s1highenergydatasource
+```bash
+# Clone the repository
+git clone https://github.com/AZjk/rsMap3D.git
+cd rsMap3D
 
-Version 1.1.4    - 2017-06-08
-	Remove @profile from s1highenergydatasource didn't take last time.
+# Create and activate a conda environment
+conda create -n rsmap3d python=3.13 -y
+conda activate rsmap3d
 
-Version 1.1.5    - 2017-08-01	
-    Add support for ccdscans from the XPCS beamlines.  This uses spec to scan 
-    and store angle information and IMM files (local to APS) to store images.
-    The spec file has '#CCD ccdscan scannum' line to indicate this type of scan.
-    For now supporting subtraction of dark images (averaged without the first 
-    dark Image, reading the location of files from the '#CCD image_dir' line
-    and replacing the base part of this image directory for cases where the 
-    data has been copied to another computer.
-	
-Version 1.1.6     - 2017-08-04
-    To keep up with some interpreter versions being sensitive to this have
-    switched '== None' with 'is None'
-    
-Version 1.1.7
-    Add powderscan output for sector 33.  
-    Play around with new setup.py.  Added resources directory with example xml
-    and also get the LICENSE file into the distro.
-    
-Version 1.1.8   2017-11-7
-    Fix problem selecting only a one or two images to process from a scan.  This 
-    caused a problem if the size of the scan was such that processing was
-    done in a number of passes based on user defined amount of memory to use 
-    and the size and number of images to process.  
-    Add Powder scan form into the S33 scan form.
-    
-Version 1.1.9   2017-11-7
-    Fix Gridmapper to show 100% when done.
-    Fix S1 to show 100% when done loading.
-    
-Version 1.2.0rc1 2019-04-02
-    The major change is to switch to Python 3 and PyQt5, and VTK 8.2, with 
-    as little change to the overall code as psosible.  So far, this has
-    been tested on Mac with Anaconda Python (custom version has been updated),
-    with conda 4.6.7(conda-build version: 3.4.1), python 3.6.8.final.0.
-    
-Version 1.2.0rc2 2019-04-02
-    Fix a bug creating an new configuration file when one does not exist.  
+# Install PySide6 and VTK (conda handles VTK binaries)
+conda install -c conda-forge pyside6 vtk -y
 
-Version 1.2.0rc2 2019-04-02
-    Mostly fix issues in Py2 to 3 conversion.  File dialogs now return a 
-    list even for single file operations.  Needed to pick list element as 0th
-    element in using single file selection. 
-    
-Version 1.2.0rc4 2019-04-02
-    Fix a problem with extracting the UB matrix from the scan file.  This 
-    was due to a change in Pythons built-in 'map' function.  This caused 
-    a problem using the output to create a numpy array.
-    
-Version 1.2.1  2019-07-11
-    Finalize 1.2 release & add a function to copy one motor columns data to another
-    column.  This is useful when both sample and detector have the same motor.  
-    Cannot include the same motor twice.  This allows setting up a dummy motor 
-    to copy another array into it.
+# Install the package in editable mode
+pip install -e .
+
+# Optional: XPCS support (adds pyepics)
+pip install -e ".[xpcs]"
+
+# Optional: dev tools (pytest, ruff)
+pip install -e ".[dev]"
+```
+
+### Dependencies
+
+| Package | Purpose |
+|---------|---------|
+| PySide6 | Qt GUI framework |
+| vtk | 3D visualization (VTK render windows in the GUI) |
+| numpy | Numerical arrays |
+| xrayutilities | Q-space gridder, stereographic projections |
+| h5py + hdf5plugin | HDF5/NeXus file I/O |
+| matplotlib | Powder diffraction plots |
+| spec2nexus | SPEC file indexing |
+| pillow | TIFF image reading |
+| pyepics (optional) | EPICS PV polling for realtime scans |
+
+### Optional / Manual
+
+- **pyimm** — required only for the `XPCSSpecDataSource` (IMM/XPCS format). Not on PyPI; obtain from the beamline infrastructure.
+- **ParaView** — required for `scripts/paraview/` plotting scripts, which use `pvpython` (ParaView's bundled Python interpreter), not the conda env.
+
+## Supported data formats
+
+rsMap3D provides beamline-specific data sources for spec files, HDF5/NeXus, and IMM formats.
+
+| Source | Format | Beamline / Facility |
+|--------|--------|---------------------|
+| `Sector33SpecDataSource` | SPEC + TIFF images | APS Sector 33-ID |
+| `Sector12SpecDataSource` | SPEC + TIFF images | APS Sector 12-BM |
+| `Sector28SpecDataSource` | SPEC + HDF5 images | APS CHEX 28-ID |
+| `Sector34NexusEscanSource` | HDF5/NeXus escan | APS Sector 34 |
+| `NSLSIISector4SpecDataSource` | SPEC + HDF5 images | NSLS-II 4-ID-E |
+| `Sector12NSLSIISpecDataSource` | SPEC + TIFF images | NSLS-II Sector 12 |
+| `S1HighEnergyDiffractionDS` | .par param + binary frames | APS 1-BM |
+| `s8waxpcsSpecDataSource` | SPEC + HDF5 (XPCS) | APS 8-ID-E |
+| `s28waxpcsSpecDataSource` | SPEC + HDF5 (XPCS) | APS CHEX 28-ID |
+| `XPCSSpecDataSource` | SPEC + IMM files | APS XPCS beamlines |
+
+Each data source reads **instrument geometry** and **detector geometry** from XML config files (sample/detector circles, primary beam direction, pixel size, distance, etc.).
+
+## Architecture
+
+### Core pipeline
+
+```
+DataSource ──→ Mapper ──→ GridWriter
+  (load raw     (grid Q-space   (write
+   data)         using            output)
+                  xrayutilities)
+```
+
+1. **DataSource** (`rsMap3D/datasource/`) loads raw scan data, extracts angles, intensities, and Q-space geometry.
+2. **Mapper** (`rsMap3D/mappers/`) drives `xrayutilities` to compute Q coordinates (qx, qy, qz) and bin intensities into a regular 3D grid.
+3. **GridWriter** (`rsMap3D/mappers/output/`) serializes the result to disk.
+
+### Class hierarchy
+
+```
+AbstractDataSource
+  └── AbstractXrayutilitiesDataSource
+        └── SpecXMLDrivenDataSource
+              ├── Sector33SpecDataSource
+              ├── Sector12SpecDataSource
+              ├── Sector28SpecDataSource
+              ├── NSLSIISector4SpecDataSource
+              ├── Sector12NSLSIISpecDataSource
+              ├── s8waxpcsSpecDataSource
+              ├── s28waxpcsSpecDataSource
+              └── XPCSSpecDataSource
+        └── S1HighEnergyDiffractionDS
+  └── Sector34NexusEscanSource
+
+AbstractGridMapper
+  ├── QGridMapper        (3D reciprocal space)
+  ├── PowderScanMapper   (1D powder diffraction)
+  └── XPCSGridLocationMapper
+
+AbstractGridWriter
+  ├── VTIGridWriter
+  ├── ImageStackWriter
+  └── XPCSGridLocationWriter
+```
+
+### GUI
+
+The PySide6 application (`rsMap3D/rsmEdit.py`) provides a tabbed workflow:
+
+1. **File** — select a data source format and configure input paths (spec file, image directory, instrument/detector XML configs, bad-pixel and flat-field files).
+2. **Data Range** — set Q-space bounding boxes (qx, qy, qz min/max).
+3. **Scans** — preview the scan extent in a VTK 3D view.
+4. **Process Data** — choose an output format and run the mapper.
+
+## CLI subcommands
+
+### `rsMap3D gui`
+
+Launch the desktop application (default when no subcommand is given).
+
+### `rsMap3D map-angle-scan CONFIG.json`
+
+Grid spec angle-scan data into one or more VTI reciprocal space maps.
+
+**Example config** (`scripts/rsmconfig_v4.2_lsfo_IntegerPeaks.json`):
+
+```json
+{
+    "project_dir": "/path/to/data/",
+    "detector_config": "detector_geometry.xml",
+    "instrument_config": "instrument_geometry.xml",
+    "badpixel_file": "badpixels.txt",
+    "flat_field": null,
+    "use_HKL": true,
+    "detector_name": "Eiger500k",
+    "binning": [1, 1],
+    "roi_setting": [10, 1020, 10, 504],
+    "nx": 400,
+    "ny": 400,
+    "nz": 200,
+    "grid_range": null,
+    "datasets": [
+        {
+            "spec_file": "LSFO_001_Cryo.spec",
+            "scan_list": [["316-318"]],
+            "scan_range": {
+                "cycles": 1,
+                "scans_per_cycle": 30,
+                "rsm_sets": [{"start": 117, "end": 207}]
+            }
+        }
+    ]
+}
+```
+
+### `rsMap3D map-parametric-scan CONFIG.json`
+
+Grid a parametric scan, producing **one VTI output per image** (e.g., one map per temperature point).
+
+### `rsMap3D powder-scan CONFIG.json`
+
+Reduce multiple scans into **1D powder-diffraction curves** (.xye files).
+
+## Output formats
+
+| Format | Extension | Description | Viewer |
+|--------|-----------|-------------|--------|
+| VTI | `.vti` | VTK XML Image Data (3D volume, binary or ASCII) | [ParaView](https://www.paraview.org/) |
+| Image stack | `.tif` | TIFF slices along one axis (x, y, or z) | Any image viewer |
+| Powder scan | `.xye` | Three-column text (x, intensity, error) with metadata headers | Origin, matplotlib |
+| XPCS grid locations | `.csv` | Q-space grid coordinates (qx, qy, qz) | Any spreadsheet |
+
+## Instrument / detector configuration
+
+Sample and detector geometry is specified in **XML config files** read by:
+
+- `InstForXrayutilitiesReader` — instrument config (sample/detector circles, primary beam direction, monitors, filters, sample angle mapping functions)
+- `DetectorGeometryForXrayutilitiesReader` — detector config (pixel size, dimensions, distance, center channel pixel, pixel directions)
+
+Example configs are shipped as package data in `src/rsMap3D/resources/` and as test fixtures in `tests/fixtures/`.
+
+## Configuration
+
+User settings are stored in **`~/.rsMap3D.ini`**:
+
+```ini
+[Memory]
+maxImageMemory = 104857600   ; 100 MB — controls how scans are split into memory-limited passes
+
+[InputForms]
+InputForm0 = rsMap3D.gui.input.s33specscanfileform.S33SpecScanFileForm
+; ... auto-discovered form classes ...
+
+[MPI]
+mpi_host_file =
+mpi_worker_count = 1
+```
+
+Available input forms are auto-discovered from `rsMap3D.gui.input` at runtime.
+
+## Project structure
+
+```
+rsMap3D/
+├── pyproject.toml              # Build config, dependencies, entry point
+├── src/rsMap3D/
+│   ├── cli.py                  # CLI entry point (gui, map-angle-scan, ...)
+│   ├── rsmEdit.py              # PySide6 GUI main window
+│   ├── config/                 # Config parsing, logging
+│   ├── datasource/             # Beamline-specific data sources
+│   │   ├── abstractDataSource.py
+│   │   ├── Sector33SpecDataSource.py
+│   │   └── ...
+│   ├── gui/
+│   │   ├── input/              # Input forms (one per beamline format)
+│   │   └── output/             # Output forms (VTI, image stack, powder, XPCS)
+│   ├── mappers/
+│   │   ├── gridmapper.py       # 3D Q-space gridder
+│   │   ├── powderscanmapper.py # 1D powder diffraction
+│   │   └── output/             # Grid writers (VTI, TIFF, CSV, .xye)
+│   ├── transforms/             # 3D transforms (unity, pole map)
+│   ├── utils/                  # Scan range parser
+│   └── workflows/              # CLI headless workflows
+├── tests/                      # pytest test suite
+│   └── fixtures/               # Test data (spec, HDF5, XML configs)
+├── scripts/                    # Legacy reference scripts, sample configs
+└── docs/                       # Sphinx documentation
+```
+
+## License
+
+Copyright (c) 2012–2026, UChicago Argonne, LLC. All Rights Reserved. See [LICENSE](LICENSE).
+
+## Credits
+
+rsMap3D is developed by researchers at the [Advanced Photon Source](https://www.aps.anl.gov/), Argonne National Laboratory, and collaborators at NSLS-II.
